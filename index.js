@@ -63,7 +63,7 @@ app.get('/dashboard', (req, res) => {
         return res.redirect('/'); 
     }
     // Envia o arquivo HTML físico em vez de uma string
-    res.sendFile(path.join(__dirname, '/dashboard.html'));
+    res.sendFile(path.join(__dirname, '../dashboard.html'));
 });
 
 // --- Rota Auxiliar para pegar dados do usuário via Front-end ---
