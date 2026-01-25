@@ -77,14 +77,11 @@ body {
     -webkit-text-fill-color: transparent;
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-align: center;
 }
 
 .carousel-caption p {
     font-size: 1.1rem;
-    background: var(--gold-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: rgba(255, 255, 255, 0.9);
     max-width: 500px;
 }
 
