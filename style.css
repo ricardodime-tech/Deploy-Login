@@ -1,0 +1,290 @@
+/* Configurações Globais e Variáveis de Cores Luxo */
+:root {
+    --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 70%, #fbf5b7 85%, #aa771c 100%);
+    --gold-solid: #b38728;
+    --gold-light: #fcf6ba;
+    --dark-charcoal: #1a1a1a;
+    --soft-white: #f8f9fa;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--soft-white);
+    color: var(--dark-charcoal);
+    overflow-x: hidden;
+}
+
+/* Layout Principal */
+.signup-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Seção Visual (Carrossel) --- */
+.visual-side {
+    flex: 1.2;
+    position: relative;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.carousel-container {
+    height: 100%;
+    position: relative;
+}
+
+.carousel-track {
+    height: 100%;
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.5) contrast(1.1); /* Escurece para destacar o texto */
+}
+
+.carousel-caption {
+    position: absolute;
+    bottom: 10%;
+    left: 10%;
+    right: 10%;
+    color: white;
+    z-index: 10;
+}
+
+.carousel-caption h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.carousel-caption p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 500px;
+}
+
+/* --- Seção de Formulário --- */
+.form-side {
+    flex: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: white;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 450px;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+/* Título com a Logo */
+header h2 {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+header h2 img {
+    filter: drop-shadow(10px 2px 4px rgba(0,0,0,0.1));
+}
+
+header p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+header a {
+    color: var(--gold-solid);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Botões Sociais */
+.social-auth {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.btn-social {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-social:hover {
+    border-color: var(--gold-solid);
+    background-color: #fffdf5;
+}
+
+.btn-social img {
+    width: 20px;
+}
+
+/* Divisor */
+.divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #eee;
+}
+
+.divider span {
+    background: white;
+    padding: 0 15px;
+    position: relative;
+    color: #999;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Estilo do Formulário */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #eee;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--gold-solid);
+    box-shadow: 0 0 0 4px rgba(179, 135, 40, 0.1);
+}
+
+.terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.terms a {
+    color: var(--gold-solid);
+}
+
+/* Botão Primário Dourado */
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background: var(--gold-gradient);
+    color: #1a1a1a; /* Texto escuro para contraste no ouro */
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+    box-shadow: 0 4px 15px rgba(179, 135, 40, 0.2);
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* Controles do Carrossel */
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    z-index: 20;
+    transition: 0.3s;
+}
+
+.carousel-button:hover {
+    background: var(--gold-gradient);
+    color: #000;
+}
+
+.carousel-button.prev { left: 10px; border-radius: 0 8px 8px 0; }
+.carousel-button.next { right: 10px; border-radius: 8px 0 0 8px; }
+
+/* Responsividade */
+@media (max-width: 968px) {
+    .signup-container {
+        flex-direction: column;
+    }
+    .visual-side {
+        height: 350px;
+    }
+    .form-side {
+        padding: 40px 20px;
+    }
+}
