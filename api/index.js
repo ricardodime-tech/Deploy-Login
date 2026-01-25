@@ -9,12 +9,12 @@ const app = express();
 
 // --- Configuração de Sessão ---
 app.use(session({
-    secret: 'chave-secreta-richard-field', // Use uma string aleatória e complexa
+    secret: 'chave-secreta-richard-field', 
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24, // O cookie expira em 24 horas
-        secure: false // Mude para 'true' se usar HTTPS (em produção)
+        maxAge: 1000 * 60 * 60 * 24, // 24 horas
+        secure: false 
     }
 }));
 
@@ -47,25 +47,32 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && await bcrypt.compare(password, user.password)) {
-        // SALVANDO NA SESSÃO
         req.session.userId = user._id;
         req.session.userEmail = user.email;
+        // Redireciona para a rota /dashboard
         res.redirect('/dashboard');
     } else {
         res.send("E-mail ou senha incorretos. <a href='/'>Tentar novamente</a>");
     }
 });
 
-// --- Rota Protegida (Só acessa se tiver o Cookie) ---
+// --- Rota Protegida (Modificada para carregar dashboard.html) ---
 app.get('/dashboard', (req, res) => {
+    // Verifica se o usuário tem uma sessão ativa
     if (!req.session.userId) {
-        return res.redirect('/'); // Se não estiver logado, volta para o login
+        return res.redirect('/'); 
     }
-    res.send(`
-        <h1>Bem-vindo à área restrita!</h1>
-        <p>Logado como: ${req.session.userEmail}</p>
-        <a href="/logout">Sair do sistema</a>
-    `);
+    // Envia o arquivo HTML físico em vez de uma string
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+// --- Rota Auxiliar para pegar dados do usuário via Front-end ---
+app.get('/api/user-data', (req, res) => {
+    if (req.session.userId) {
+        res.json({ email: req.session.userEmail });
+    } else {
+        res.status(401).json({ error: "Não autorizado" });
+    }
 });
 
 // --- Logout ---
