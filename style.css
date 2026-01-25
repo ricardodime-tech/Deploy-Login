@@ -193,6 +193,7 @@ header a {
 /* Estilo do Formulário */
 .input-group {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .input-group label {
@@ -204,12 +205,15 @@ header a {
 }
 
 .input-group input {
-    width: 100%;
+    width: auto;
+    max-width: 400px;
     padding: 12px 15px;
     border: 1.5px solid #eee;
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s;
+    display: block;
+    margin: 0 auto;
 }
 
 .input-group input:focus {
@@ -233,7 +237,8 @@ header a {
 
 /* Botão Primário Dourado */
 .btn-primary {
-    width: 100%;
+    width: auto;
+    max-width: 400px;
     padding: 15px;
     border: none;
     border-radius: 8px;
@@ -246,6 +251,8 @@ header a {
     cursor: pointer;
     transition: transform 0.2s, filter 0.2s;
     box-shadow: 0 4px 15px rgba(179, 135, 40, 0.2);
+    display: block;
+    margin: 0 auto;
 }
 
 .btn-primary:hover {
