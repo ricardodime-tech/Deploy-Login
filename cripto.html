@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gráficos B3 e Criptomoedas</title>
+    <style>
+        /* Variáveis de Tema (Copiadas de index.html e adaptadas) */
+        :root {
+            --bg-primary: #0f1320;
+            --bg-secondary: #1a1f35;
+            --card-bg: #161b2e;
+            --text-primary: #e6e7ea;
+            --text-secondary: #a8adbd;
+            --accent-blue: #667eea;
+            --accent-purple: #764ba2;
+            --nav-height: 70px;
+            --muted: var(--text-secondary);
+            /* Variáveis adicionadas de graficob3.html para consistência visual */
+            --bg: #0f1320; 
+            --card: #161b2e; 
+            --text: #e6e7ea; 
+            --accent: #3b82f6; 
+        }
+
+        /* Estilos Globais e Body */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 0; /* Remove padding do body para usar o container de graficob3.html */
+        }
+        
+        /* ------------------------------------------------ */
+        /* ESTILOS ADICIONADOS DE graficob3.html (B3 GRAPHS) */
+        /* ------------------------------------------------ */
+        header {
+            padding: 24px 20px 8px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 16px 20px 32px;
+            /* Não é necessário min-height aqui, pois queremos que se ajuste ao conteúdo */
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            grid-template-rows: 1fr 1fr;
+            gap: 16px;
+            /* height: 100%; Removido */
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid #232946;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .card header {
+            padding: 10px 12px;
+            border-bottom: 1px solid #232946;
+            flex-shrink: 0;
+        }
+        .card header h2 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .frame-wrap {
+            position: relative;
+            width: 100%;
+            padding: 0;
+            flex-grow: 1;
+        }
+        /* Estilos específicos para o widget do TradingView */
+        .tradingview-widget-container {
+            width: 100%;
+            height: 100%;
+        }
+        .tradingview-widget-container__widget {
+            /* Garante que o widget use todo o espaço do card menos o copyright */
+            height: calc(100% - 32px) !important; 
+            width: 100%;
+        }
+        .tradingview-widget-copyright {
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-align: right;
+            border-top: 1px solid #232946;
+            background: #101423;
+        }
+        .tradingview-widget-copyright a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        /* Fim dos estilos do TradingView */
+
+
+        /* ------------------------------------------------ */
+        /* ESTILOS DE cripto.html (CRYPTO WIDGET & BODY) */
+        /* ------------------------------------------------ */
+
+        /* Adiciona padding superior ao container de criptomoedas para separação */
+        .crypto-section {
+            padding: 40px 20px; /* Padding para o conteúdo de cripto */
+            max-width: 1360px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: var(--accent-blue);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center; /* Centraliza o título Criptomoedas */
+        }
+
+        #pdf-container { /* Mantido apenas para não quebrar a estilização original, mas não é mais usado para PDF */
+            /* Seções relacionadas ao PDF removidas */
+        }
+        
+        .file-input-wrapper { /* Removido, pois o PDF Viewer foi removido */
+            display: none;
+        }
+
+        /* Estiliza a seção do Iframe da Investing.com */
+        .investing-widget-wrapper {
+            margin-bottom: 40px; 
+            border: 2px solid var(--card-bg); 
+            border-radius: 8px; 
+            overflow: hidden; 
+            height: 600px; 
+            max-width: 100%;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); /* Sombra para combinar com cards B3 */
+        }
+        
+        .poweredBy {
+            font-family: Arial, Helvetica, sans-serif; 
+            color: var(--text-secondary); 
+            text-align: right; 
+            font-size: 0.8em; 
+            padding: 5px 10px; 
+            background: var(--bg-primary);
+        }
+
+        /* Rodapé de graficob3.html ajustado para o layout unificado */
+        footer {
+            /* Reduzido o padding superior e inferior para compactar o rodapé */
+            padding: 10px 20px 20px; 
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 40px; /* Margem superior para separar do conteúdo */
+        }
+    
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- <h1>Painel de Gráficos B3</h1>
+        <p>Acompanhe em tempo real as principais ações da bolsa brasileira.</p>-->
+    </header>
+
+    <main class="container">
+        <section class="grid">
+
+            <article class="card">
+                <header><h2>Bitcoin BTC</h2></header>
+                <div class="frame-wrap">
+                    <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container" style="height:100%;width:100%">
+  <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BTCUSD/?exchange=COINBASE" rel="noopener nofollow" target="_blank"><span class="blue-text">Bitcoin price</span></a><span class="trademark"> by TradingView</span></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {
+  "allow_symbol_change": true,
+  "calendar": false,
+  "details": false,
+  "hide_side_toolbar": true,
+  "hide_top_toolbar": false,
+  "hide_legend": false,
+  "hide_volume": false,
+  "hotlist": false,
+  "interval": "60",
+  "locale": "en",
+  "save_image": true,
+  "style": "1",
+  "symbol": "COINBASE:BTCUSD",
+  "theme": "dark",
+  "timezone": "Etc/UTC",
+  "backgroundColor": "#0F0F0F",
+  "gridColor": "rgba(242, 242, 242, 0.06)",
+  "watchlist": [],
+  "withdateranges": false,
+  "compareSymbols": [],
+  "studies": [
+    "STD;Bollinger_Bands",
+    "STD;PSAR"
+  ],
+  "autosize": true
+}
+  </script>
+</div>
+
+                </div>
+            </article>
+
+            <article class="card">
+                <header><h2>Ethereum ETH</h2></header>
+                <div class="frame-wrap">
+                    <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container" style="height:100%;width:100%">
+  <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/ETHUSD/?exchange=COINBASE" rel="noopener nofollow" target="_blank"><span class="blue-text">Ethereum price</span></a><span class="trademark"> by TradingView</span></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {
+  "allow_symbol_change": true,
+  "calendar": false,
+  "details": false,
+  "hide_side_toolbar": true,
+  "hide_top_toolbar": false,
+  "hide_legend": false,
+  "hide_volume": false,
+  "hotlist": false,
+  "interval": "60",
+  "locale": "en",
+  "save_image": true,
+  "style": "1",
+  "symbol": "COINBASE:ETHUSD",
+  "theme": "dark",
+  "timezone": "Etc/UTC",
+  "backgroundColor": "#0F0F0F",
+  "gridColor": "rgba(242, 242, 242, 0.06)",
+  "watchlist": [],
+  "withdateranges": false,
+  "compareSymbols": [],
+  "studies": [
+    "STD;Bollinger_Bands",
+    "STD;PSAR"
+  ],
+  "autosize": true
+}
+  </script>
+</div>
+
+                </div>
+            </article>
+
+            <article class="card">
+                <header><h2>Ripple XRP</h2></header>
+                <div class="frame-wrap">
+                    
+
+<div class="tradingview-widget-container" style="height:100%;width:100%">
+  <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/XRPUSD/?exchange=COINBASE" rel="noopener nofollow" target="_blank"><span class="blue-text">XPR price</span></a><span class="trademark"> by TradingView</span></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {
+  "allow_symbol_change": true,
+  "calendar": false,
+  "details": false,
+  "hide_side_toolbar": true,
+  "hide_top_toolbar": false,
+  "hide_legend": false,
+  "hide_volume": false,
+  "hotlist": false,
+  "interval": "60",
+  "locale": "en",
+  "save_image": true,
+  "style": "1",
+  "symbol": "COINBASE:XRPUSD",
+  "theme": "dark",
+  "timezone": "Etc/UTC",
+  "backgroundColor": "#0F0F0F",
+  "gridColor": "rgba(242, 242, 242, 0.06)",
+  "watchlist": [],
+  "withdateranges": false,
+  "compareSymbols": [],
+  "studies": [
+    "STD;Bollinger_Bands",
+    "STD;PSAR"
+  ],
+  "autosize": true
+}
+  </script>
+</div>
+
+                </div>
+            </article>
+            
+            <article class="card">
+                <header><h2>Binance BNB</h2></header>
+                <div class="frame-wrap">
+                    <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container" style="height:100%;width:100%">
+  <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BNBUSD/?exchange=COINBASE" rel="noopener nofollow" target="_blank"><span class="blue-text">Binance coin price</span></a><span class="trademark"> by TradingView</span></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {
+  "allow_symbol_change": true,
+  "calendar": false,
+  "details": false,
+  "hide_side_toolbar": true,
+  "hide_top_toolbar": false,
+  "hide_legend": false,
+  "hide_volume": false,
+  "hotlist": false,
+  "interval": "60",
+  "locale": "en",
+  "save_image": true,
+  "style": "1",
+  "symbol": "COINBASE:BNBUSD",
+  "theme": "dark",
+  "timezone": "Etc/UTC",
+  "backgroundColor": "#0F0F0F",
+  "gridColor": "rgba(242, 242, 242, 0.06)",
+  "watchlist": [],
+  "withdateranges": false,
+  "compareSymbols": [],
+  "studies": [
+    "STD;Bollinger_Bands",
+    "STD;PSAR"
+  ],
+  "autosize": true
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+                </div>
+            </article>
+
+        </section>
+    </main>
+
+    <div class="crypto-section">
+        <h1>Taxas de Criptomoedas</h1>
+        <div class="investing-widget-wrapper">
+            <iframe src="https://br.widgets.investing.com/crypto-currency-rates?theme=darkTheme&pairs=945629,997650,1010785,1073899,1177172,1158819,1099022,1054919,1173182,1057928,1211185,1129153,1153127,1224068,1137399,1056828,1202524,1173409,1202584,1213356,1116580,1099576,1031397,1122657,1031707,1118146,1127885" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    allowtransparency="true" 
+                    marginwidth="0" 
+                    marginheight="0">
+            </iframe>
+            <div class="poweredBy">
+                Desenvolvido por <a href="https://br.investing.com?utm_source=WMT&amp;utm_medium=referral&amp;utm_campaign=CRYPTO_CURRENCY_RATES&amp;utm_content=Footer%20Link" target="_blank" rel="nofollow" style="color: var(--accent-blue); text-decoration: none;">Investing.com</a>
+            </div>
+        </div>
+        <div id="pdf-container" style="display: none;"></div>
+        <div class="file-input-wrapper" style="display: none;"></div>
+    </div>
+    
+    <footer>
+        <p>Atualização em tempo real • Dados de desempenho das principais empresas listadas na B3 e Criptomoedas</p>
+        <p style="margin-top: 10px; font-size: 0.85em;">© 2025 - Informações fornecidas apenas para fins educacionais</p>
+    </footer>
+
+</body>
+</html>

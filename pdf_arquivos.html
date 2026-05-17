@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de PDF Local</title>
+    <style>
+        /* Variáveis de Tema (Copiadas de index.html) */
+        :root {
+            --bg-primary: #0f1320;
+            --bg-secondary: #1a1f35;
+            --card-bg: #161b2e;
+            --text-primary: #e6e7ea;
+            --text-secondary: #a8adbd;
+            --accent-blue: #667eea;
+            --accent-purple: #764ba2;
+            --nav-height: 70px;
+            /* Adicionei variáveis de cor do rodapé de hora_bolsa para consistência */
+            --muted: var(--text-secondary);
+        }
+
+        /* Estilos Globais e Body (Copiados de index.html) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px; /* Adicionado padding para o conteúdo */
+        }
+        
+        /* Estilos para o Visualizador de PDF */
+        h1 {
+            color: var(--accent-blue);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        #pdf-container {
+            margin-top: 20px;
+            width: 100%;
+            height: calc(100vh - 200px); /* Ajuste a altura para considerar o cabeçalho/input */
+            border: 2px solid var(--card-bg); /* Borda escura */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+			
+        }
+        
+        #pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: var(--card-bg); /* Fundo do iframe, se o PDF não carregar */
+        }
+        
+        .file-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Estilização Customizada para o Input File (para o tema escuro) */
+        input[type="file"] {
+            /* Permite que o texto do input file seja lido no tema escuro */
+            color: var(--text-primary);
+            background-color: var(--bg-secondary);
+            border: 1px solid #232946;
+            padding: 8px;
+            border-radius: 6px;
+            max-width: 400px;
+        }
+        
+        /* Estilo do botão do seletor de arquivo */
+        input[type="file"]::file-selector-button {
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* --- Estilos para a Tabela de Ativos --- */
+        .asset-table-container {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            overflow-x: auto; /* Garante que a tabela role horizontalmente em telas pequenas */
+            border: 1px solid var(--bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .financial-table {
+            width: 100%;
+            border-collapse: collapse; /* Para bordas de célula únicas */
+            font-size: 0.85rem;
+            min-width: 1500px; /* Largura mínima para acomodar todas as colunas */
+        }
+
+        .financial-table th, .financial-table td {
+            padding: 10px 12px;
+            text-align: left; /* Padrão, será sobrescrito abaixo */
+            border-bottom: 1px solid var(--card-bg); /* Separador de linha */
+            white-space: nowrap; /* Impede a quebra de linha nas células */
+        }
+
+        /* Cabeçalho da tabela */
+        .financial-table thead th {
+            background-color: var(--bg-secondary);
+            color: var(--accent-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            border-top: 1px solid var(--accent-blue);
+        }
+        
+        /* NOVO: Centraliza os cabeçalhos das colunas de links (14, 15, 16) */
+        .financial-table th:nth-child(3),
+        .financial-table th:nth-child(4),
+		.financial-table th:nth-child(5),
+        .financial-table th:nth-child(6),
+		.financial-table th:nth-child(7),
+        .financial-table th:nth-child(8),
+		.financial-table th:nth-child(9),
+        .financial-table th:nth-child(10),
+		.financial-table th:nth-child(11),
+		.financial-table th:nth-child(12),
+        .financial-table th:nth-child(13),		
+		.financial-table th:nth-child(14),
+        .financial-table th:nth-child(15),
+        .financial-table th:nth-child(16) {
+            text-align: center;
+        }
+
+        /* Linhas do corpo da tabela */
+        .financial-table tbody tr {
+            background-color: var(--bg-primary); /* Linhas ímpares (odd) */
+        }
+        
+        /* Estilo para linhas alternadas */
+        .financial-table tbody tr:nth-child(even) {
+            background-color: var(--card-bg); /* Linhas pares (even) */
+        }
+        
+        .financial-table tbody tr:hover {
+            background-color: #232a40; /* Efeito hover sutil (mais escuro que as linhas alternadas) */
+        }
+
+        /* Estilo para a coluna de links */
+        .financial-table td a {
+            color: var(--text-secondary); /* Usa a cor secundária para links */
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .financial-table td a:hover {
+            color: var(--accent-blue); /* Cor de destaque ao passar o mouse */
+        }
+
+        /* Alinhamento de colunas numéricas (do VA até o ALT) */
+        .financial-table td:nth-child(n+3):nth-child(-n+13) {
+            text-align: right;
+        }
+
+        /* --- Estilos para os Links de Ação (como Botões) - COM GRADIENTE --- */
+        .action-button {
+            display: inline-block;
+            /* Estilo do Botão do File Input: linear-gradient(90deg, var(--accent-purple), var(--accent-blue)) */
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue)); 
+            color: white !important;
+            padding: 4px 8px; /* Ajuste para o tamanho da célula da tabela */
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px; /* Para combinar com o input file */
+            font-size: 0.75rem; /* Ajuste para o tamanho da célula da tabela */
+            font-weight: 600; /* Para combinar com o botão Escolher Arquivo */
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Para combinar com o botão Escolher Arquivo */
+            transition: all 0.3s ease;
+            min-width: 100px;
+            white-space: nowrap; /* Impede quebra de linha no botão */
+        }
+
+        .action-button:hover {
+            opacity: 0.9; /* Mantém a opacidade do hover do botão de arquivo */
+            transform: translateY(-1px); /* Efeito de elevação */
+        }
+
+        /* Ajuste de alinhamento para as colunas de links (14, 15, 16) */
+        .financial-table td:nth-child(14),
+        .financial-table td:nth-child(15),
+        .financial-table td:nth-child(16) {
+            text-align: center;
+        }
+
+        /* --- Estilos para a Legenda --- */
+        .legend-container {
+            margin-top: 20px;
+            margin-bottom: 40px;
+            padding: 15px;
+            background-color: var(--card-bg); /* Fundo da legenda */
+            border-radius: 8px;
+            border: 1px solid var(--bg-secondary);
+            max-width: 700px;
+        }
+
+        .legend-container h3 {
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .legend-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .legend-table tr {
+            border-bottom: 1px dashed var(--bg-secondary);
+        }
+
+        .legend-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .legend-table td {
+            padding: 5px 0;
+        }
+
+        .legend-table td:first-child {
+            color: var(--text-primary);
+            font-weight: bold;
+            width: 120px; /* Largura fixa para os códigos */
+            padding-right: 15px;
+            text-align: left;
+        }
+
+        .legend-table td:last-child {
+            color: var(--text-secondary);
+        }
+        
+        /* --- Estilos para o Pop-up (Modal) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85); /* Fundo escurecido */
+            display: none; /* Inicia oculto */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.9);
+            width: 90%;
+            height: 90%;
+            max-width: 1200px;
+            max-height: 800px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-blue);
+        }
+
+        #modal-iframe {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
+            background-color: white; /* Para garantir que o conteúdo da web seja legível */
+        }
+        /* Fim dos Estilos do Pop-up (Modal) */
+
+
+        /* ESTILO DO NOVO RODAPÉ (Copiado/Adaptado de hora_bolsa.html) */
+        footer {
+            padding: 30px 20px; /* Mais padding para combinar com hora_bolsa */
+            color: var(--text-secondary); /* Usa text-secondary (que é var(--muted)) */
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separador */
+            margin-top: 40px; /* Margem superior para separar do conteúdo */
+        }
+        /* FIM DO ESTILO DO NOVO RODAPÉ */
+    
+    </style>
+</head>
+<body>
+
+    
+    
+    <div class="asset-table-container">
+        <table class="financial-table">
+            <thead>
+                <tr>
+                    <th>EMPRESA</th>
+                    <th>COD</th>
+                    <th>VA</th>
+                    <th>PAL5</th>
+                    <th>VAV</th>
+                    <th>DIVVA</th>
+                    <th>VAPL</th>
+                    <th>VALL</th>
+                    <th>LRPL</th>
+                    <th>LLPL</th>
+                    <th>ULTSO</th>
+                    <th>T</th>
+                    <th>ALT</th>
+                    <th>PESQUISA</th>
+                    <th>FUNDAMENTUS</th>
+                    <th>STATUS</th>
+                <Ctr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ALPARGATAS</td>
+                    <td>ALPA4</td>
+                    <td>10.91</td>
+                    <td>-11</td>
+                    <td>72</td>
+                    <td>1.5</td>
+                    <td>1.72</td>
+                    <td>20.0</td>
+                    <td>0.12</td>
+                    <td>0.086</td>
+                    <td>-0.02</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/ALPA4" class="modal-link action-button">PESQUISA ALPA4</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=ALPA4" class="modal-link action-button">FUNDAMENTUS ALPA4</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/ALPA4" class="modal-link action-button">STATUS ALPA4</a></td>
+                </tr>
+                <tr>
+                    <td>AMBEV</td>
+                    <td>ABEV3</td>
+                    <td>13.62</td>
+                    <td>-1</td>
+                    <td>16</td>
+                    <td>5.4</td>
+                    <td>2.31</td>
+                    <td>12.6</td>
+                    <td>0.16</td>
+                    <td>0.183</td>
+                    <td>-0.26</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/ABEV3" class="modal-link action-button">PESQUISA ABEV3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=ABEV3" class="modal-link action-button">FUNDAMENTUS ABEV3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/ABEV3" class="modal-link action-button">STATUS ABEV3</a></td>
+                </tr>
+                <tr>
+                    <td>B3</td>
+                    <td>B3SA3</td>
+                    <td>13.89</td>
+                    <td>-4</td>
+                    <td>35</td>
+                    <td>3.5</td>
+                    <td>3.60</td>
+                    <td>14.5</td>
+                    <td>0.25</td>
+                    <td>0.248</td>
+                    <td>-0.01</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/B3SA3" class="modal-link action-button">PESQUISA B3SA3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=B3SA3" class="modal-link action-button">FUNDAMENTUS B3SA3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/B3SA3" class="modal-link action-button">STATUS B3SA3</a></td>
+                </tr>
+                <tr>
+                    <td>CSU DIGITAL</td>
+                    <td>CSUD3</td>
+                    <td>19.19</td>
+                    <td>-1</td>
+                    <td>25</td>
+                    <td>3.6</td>
+                    <td>1.56</td>
+                    <td>8.1</td>
+                    <td>0.19</td>
+                    <td>0.193</td>
+                    <td>-0.05</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/CSUD3" class="modal-link action-button">PESQUISA CSUD3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=CSUD3" class="modal-link action-button">FUNDAMENTUS CSUD3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/CSUD3" class="modal-link action-button">STATUS CSUD3</a></td>
+                </tr>
+                <tr>
+                    <td>EMAE</td>
+                    <td>EMAE4</td>
+                    <td>37.99</td>
+                    <td>-2</td>
+                    <td>-10</td>
+                    <td>9.7</td>
+                    <td>0.91</td>
+                    <td>3.9</td>
+                    <td>0.30</td>
+                    <td>0.233</td>
+                    <td>-0.27</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/EMAE4" class="modal-link action-button">PESQUISA EMAE4</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=EMAE4" class="modal-link action-button">FUNDAMENTUS EMAE4</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/EMAE4" class="modal-link action-button">STATUS EMAE4</a></td>
+                </tr>
+                <tr>
+                    <td>FERBASA</td>
+                    <td>FESA4</td>
+                    <td>6.90</td>
+                    <td>-3</td>
+                    <td>-16</td>
+                    <td>2.0</td>
+                    <td>0.69</td>
+                    <td>20.0</td>
+                    <td>0.03</td>
+                    <td>0.035</td>
+                    <td>-0.13</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/FESA4" class="modal-link action-button">PESQUISA FESA4</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=FESA4" class="modal-link action-button">FUNDAMENTUS FESA4</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/FESA4" class="modal-link action-button">STATUS FESA4</a></td>
+                </tr>
+                <tr>
+                    <td>GRAZZIOTIN</td>
+                    <td>CGRA4</td>
+                    <td>31.10</td>
+                    <td>-1</td>
+                    <td>20</td>
+                    <td>4.4</td>
+                    <td>0.67</td>
+                    <td>7.7</td>
+                    <td>0.07</td>
+                    <td>0.086</td>
+                    <td>-0.22</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/CGRA4" class="modal-link action-button">PESQUISA CGRA4</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=CGRA4" class="modal-link action-button">FUNDAMENTUS CGRA4</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/CGRA4" class="modal-link action-button">STATUS CGRA4</a></td>
+                </tr>
+                <tr>
+                    <td>GRENDENE</td>
+                    <td>GRND3</td>
+                    <td>4.74</td>
+                    <td>-1</td>
+                    <td>-3</td>
+                    <td>8.7</td>
+                    <td>1.06</td>
+                    <td>6.3</td>
+                    <td>0.13</td>
+                    <td>0.168</td>
+                    <td>-0.27</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/GRND3" class="modal-link action-button">PESQUISA GRND3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=GRND3" class="modal-link action-button">FUNDAMENTUS GRND3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/GRND3" class="modal-link action-button">STATUS GRND3</a></td>
+                </tr>
+                <tr>
+                    <td>LOJAS RENNER</td>
+                    <td>LREN3</td>
+                    <td>15.19</td>
+                    <td>0</td>
+                    <td>25</td>
+                    <td>5.2</td>
+                    <td>1.48</td>
+                    <td>9.6</td>
+                    <td>0.12</td>
+                    <td>0.155</td>
+                    <td>-0.17</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/LREN3" class="modal-link action-button">PESQUISA LREN3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=LREN3" class="modal-link action-button">FUNDAMENTUS LREN3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/LREN3" class="modal-link action-button">STATUS LREN3</a></td>
+                </tr>
+                <tr>
+                    <td>ODONTOPREV</td>
+                    <td>ODPV3</td>
+                    <td>11.25</td>
+                    <td>-5</td>
+                    <td>4</td>
+                    <td>6.7</td>
+                    <td>4.75</td>
+                    <td>10.5</td>
+                    <td>0.48</td>
+                    <td>0.453</td>
+                    <td>-0.30</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/ODPV3" class="modal-link action-button">PESQUISA ODPV3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=ODPV3" class="modal-link action-button">FUNDAMENTUS ODPV3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/ODPV3" class="modal-link action-button">STATUS ODPV3</a></td>
+                </tr>
+                <tr>
+                    <td>SCHULZ</td>
+                    <td>SHUL4</td>
+                    <td>4.78</td>
+                    <td>-1</td>
+                    <td>-18</td>
+                    <td>4.0</td>
+                    <td>1.10</td>
+                    <td>6.0</td>
+                    <td>0.18</td>
+                    <td>0.182</td>
+                    <td>-0.04</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/SHUL4" class="modal-link action-button">PESQUISA SHUL4</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=SHUL4" class="modal-link action-button">FUNDAMENTUS SHUL4</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/SHUL4" class="modal-link action-button">STATUS SHUL4</a></td>
+                </tr>
+                <tr>
+                    <td>TEGMA</td>
+                    <td>TGMA3</td>
+                    <td>36.57</td>
+                    <td>-5</td>
+                    <td>28</td>
+                    <td>6.6</td>
+                    <td>2.45</td>
+                    <td>8.6</td>
+                    <td>0.26</td>
+                    <td>0.283</td>
+                    <td>-0.07</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/TGMA3" class="modal-link action-button">PESQUISA TGMA3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=TGMA3" class="modal-link action-button">FUNDAMENTUS TGMA3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/TGMA3" class="modal-link action-button">STATUS TGMA3</a></td>
+                </tr>
+                <tr>
+                    <td>TIM</td>
+                    <td>TIMS3</td>
+                    <td>24.72</td>
+                    <td>-1</td>
+                    <td>71</td>
+                    <td>2.9</td>
+                    <td>2.36</td>
+                    <td>13.0</td>
+                    <td>0.16</td>
+                    <td>0.181</td>
+                    <td>-0.05</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/TIMS3" class="modal-link action-button">PESQUISA TIMS3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=TIMS3" class="modal-link action-button">FUNDAMENTUS TIMS3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/TIMS3" class="modal-link action-button">STATUS TIMS3</a></td>
+                </tr>
+                <tr>
+                    <td>TOTVS</td>
+                    <td>TOTS3</td>
+                    <td>43.28</td>
+                    <td>-10</td>
+                    <td>62</td>
+                    <td>1.4</td>
+                    <td>5.01</td>
+                    <td>31.6</td>
+                    <td>0.16</td>
+                    <td>0.159</td>
+                    <td>-0.06</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/TOTS3" class="modal-link action-button">PESQUISA TOTS3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=TOTS3" class="modal-link action-button">FUNDAMENTUS TOTS3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/TOTS3" class="modal-link action-button">STATUS TOTS3</a></td>
+                </tr>
+                <tr>
+                    <td>VALID</td>
+                    <td>VLID3</td>
+                    <td>22.03</td>
+                    <td>1</td>
+                    <td>-9</td>
+                    <td>4.6</td>
+                    <td>1.00</td>
+                    <td>11.1</td>
+                    <td>0.14</td>
+                    <td>0.091</td>
+                    <td>-0.01</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/VLID3" class="modal-link action-button">PESQUISA VLID3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=VLID3" class="modal-link action-button">FUNDAMENTUS VLID3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/VLID3" class="modal-link action-button">STATUS VLID3</a></td>
+                </tr>
+                <tr>
+                    <td>WEG</td>
+                    <td>WEGE3</td>
+                    <td>43.22</td>
+                    <td>-3</td>
+                    <td>-18</td>
+                    <td>1.9</td>
+                    <td>8.09</td>
+                    <td>27.0</td>
+                    <td>0.28</td>
+                    <td>0.300</td>
+                    <td>-0.16</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/WEGE3" class="modal-link action-button">PESQUISA WEGE3</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=WEGE3" class="modal-link action-button">FUNDAMENTUS WEGE3</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/WEGE3" class="modal-link action-button">STATUS WEGE3</a></td>
+                </tr>
+                <tr>
+                    <td>WHIRLPOOL</td>
+                    <td>WHRL4</td>
+                    <td>4.57</td>
+                    <td>-1</td>
+                    <td>8</td>
+                    <td>4.3</td>
+                    <td>3.20</td>
+                    <td>15.4</td>
+                    <td>0.26</td>
+                    <td>0.208</td>
+                    <td>-0.85</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td><a href="https://www.suno.com.br/analitica/acoes/WHRL4" class="modal-link action-button">PESQUISA WHRL4</a></td>
+                    <td><a href="https://fundamentus.com.br/detalhes.php?papel=WHRL4" class="modal-link action-button">FUNDAMENTUS WHRL4</a></td>
+                    <td><a href="https://statusinvest.com.br/acoes/WHRL4" class="modal-link action-button">STATUS WHRL4</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+	<div class="legend-container">
+        <h3>Legenda</h3>
+        <table class="legend-table">
+            <tr>
+                <td>VA:</td>
+                <td>Preço da ação</td>
+            </tr>
+            <tr>
+                <td>PAL5:</td>
+                <td>Variação (%) do preço da ação nos últimos 5 pregões</td>
+            </tr>
+            <tr>
+                <td>VAR:</td>
+                <td>Variação (%) do preço da ação em 2025 em Reais</td>
+            </tr>
+            <tr>
+                <td>DIVVA:</td>
+                <td>Yield do dividendo</td>
+            </tr>
+            <tr>
+                <td>VAPL:</td>
+                <td>Preço da ação / patrimônio líquido atual</td>
+            </tr>
+            <tr>
+                <td>VALL:</td>
+                <td>Preço/lucro para 2025</td>
+            </tr>
+            <tr>
+                <td>LRPL:</td>
+                <td>Retorno real anualizado sobre último patrimônio líquido divulgado</td>
+            </tr>
+            <tr>
+                <td>LLPL:</td>
+                <td>Previsão de retorno sobre patrimônio líquido para 2025</td>
+            </tr>
+            <tr>
+                <td>T:</td>
+                <td>Trimestre dos últimos resultados registrados</td>
+            </tr>
+            <tr>
+                <td>ULTSO:</td>
+                <td>Dívida Líquida/Patrimônio Líquido do último ano (sinal negativo significa caixa líquido)</td>
+            </tr>
+            <tr>
+                <td>ALT:</td>
+                <td>Alteração >1 ponto na avaliação da ação (avaliação máximo 60 pontos)</td>
+            </tr>
+        </table>
+    </div>
+    
+	<div class="file-input-wrapper">
+       <input type="file" id="pdf-file" accept="application/pdf">
+    <br>
+	</div>
+	
+	
+	<div id="pdf-container">
+        <iframe id="pdf-viewer" title="Visualizador de PDF"></iframe>
+    </div>
+
+    <div id="link-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="modal-close-btn" class="modal-close">&times;</button>
+            </div>
+            <iframe id="modal-iframe" src="about:blank" title="Conteúdo do Link Externo"></iframe>
+        </div>
+    </div>
+	
+	
+	
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pdfFile = document.getElementById('pdf-file');
+            const pdfViewer = document.getElementById('pdf-viewer');
+            
+            // Seleciona APENAS os links com a classe 'modal-link' (Fundamentus e StatusInvest)
+            const modalLinks = document.querySelectorAll('.modal-link');
+            
+            const modalOverlay = document.getElementById('link-modal-overlay');
+            const modalIframe = document.getElementById('modal-iframe');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+
+            // Lógica para carregar o PDF
+            pdfFile.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                
+                if (file) {
+                    if (file.type === "application/pdf") {
+                        const fileURL = URL.createObjectURL(file);
+                        pdfViewer.src = fileURL;
+                        console.log(`Arquivo selecionado: ${file.name}`);
+                    } else {
+                        alert('Por favor, selecione um arquivo PDF.');
+                        pdfViewer.src = 'about:blank';
+                        event.target.value = null;
+                    }
+                } else {
+                    pdfViewer.src = 'about:blank';
+                }
+            });
+
+            // Lógica para abrir o Modal (Pop-up) apenas para os links com a classe 'modal-link'
+            modalLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Impede a navegação padrão
+                    const url = link.getAttribute('href');
+                    
+                    if (url) {
+                        modalIframe.src = url; // Define a URL do iframe
+                        modalOverlay.style.display = 'flex'; // Exibe o modal
+                    }
+                });
+            });
+
+            // Lógica para fechar o Modal (Botão X)
+            modalCloseBtn.addEventListener('click', () => {
+                modalOverlay.style.display = 'none';
+                modalIframe.src = 'about:blank'; // Limpa o iframe para parar o carregamento
+            });
+
+            // Lógica para fechar modal ao clicar fora da janela (no overlay)
+            modalOverlay.addEventListener('click', (event) => {
+                if (event.target === modalOverlay) {
+                    modalOverlay.style.display = 'none';
+                    modalIframe.src = 'about:blank';
+                }
+            });
+        });
+    </script>
+<footer>
+    <p>Atualização em tempo real • Dados de desempenho das principais empresas listadas na B3</p>
+    <p style="margin-top: 10px; font-size: 0.85em;">© 2025 - Informações fornecidas apenas para fins educacionais</p>
+</footer>
+</body>
+</html>
