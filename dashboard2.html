@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Richard Field Foundation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --white: #ffffff;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+            color: var(--text);
+        }
+        /* Sidebar */  
+        nav {
+            width: 260px;
+            height: 100vh;
+            background: #0f172a;
+            color: white;
+            padding: 2rem 1rem;
+            position: fixed;
+        }
+        nav h2 { font-size: 1.2rem; margin-bottom: 2rem; color: var(--primary); }
+        nav a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        nav a:hover, nav a.active { background: #1e293b; color: white; }
+        
+        /* Main Content */
+        main {
+            margin-left: 260px;
+            padding: 2rem;
+            width: 100%;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card h3 { margin: 0; font-size: 0.9rem; color: #64748b; }
+        .card p { margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 700; }
+        
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>RF Foundation</h2>
+        <a href="#" class="active">Visão Geral</a>
+        <a href="#">Meus Ativos</a>
+        <a href="#">Relatórios</a>
+        <a href="/logout" style="margin-top: 20px; color: #f87171;">Sair</a>
+    </nav>
+
+    <main>
+        <header>
+            <h1>Bem-vindo, <span id="user-email">Investidor</span></h1>
+            <a href="/logout" class="btn-logout">Sair do Sistema</a>
+        </header>
+
+        <section class="stats-grid">
+            <div class="card">
+                <h3>Patrimônio Total</h3>
+                <p>R$ 142.500,00</p>
+            </div>
+            <div class="card">
+                <h3>Rendimento (Mês)</h3>
+                <p style="color: #10b981;">+ R$ 2.410,20</p>
+            </div>
+            <div class="card">
+                <h3>Ativos em Carteira</h3>
+                <p>12</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>Últimas Movimentações</h3>
+            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1rem 0;">
+            <p style="color: #64748b; font-size: 0.9rem;">Nenhuma movimentação recente para exibir.</p>
+        </section>
+    </main>
+
+    <script>
+        // Opcional: Pegar o email da URL ou do servidor via fetch
+        // Por agora, vamos deixar o servidor injetar ou usar o localStorage
+    </script>
+</body>
+</html>

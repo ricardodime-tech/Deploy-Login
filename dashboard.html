@@ -1,121 +1,334 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Richard Field Foundation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard Financeiro — Black & Gold</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --bg: #f8fafc;
-            --text: #1e293b;
-            --white: #ffffff;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
+        * {
             margin: 0;
-            display: flex;
-            color: var(--text);
+            padding: 0;
+            box-sizing: border-box;
         }
-        /* Sidebar */  
+
+        :root {
+            /* Cores extraídas do grafico.html */
+            --bg-top: #d1d5db; 
+            --bg-bottom: #000000;
+            --card-bg: #1a1d23;
+            --text-primary: #e6e7ea;
+            --text-secondary: #a8adbd;
+            --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --nav-height: 70px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
+            background-color: var(--bg-bottom);
+            background-repeat: no-repeat;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* NAVEGAÇÃO */
         nav {
-            width: 260px;
-            height: 100vh;
-            background: #0f172a;
-            color: white;
-            padding: 2rem 1rem;
-            position: fixed;
+            background: #1a1d23;
+            border-bottom: 2px solid #bf953f; /* Borda dourada */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
         }
-        nav h2 { font-size: 1.2rem; margin-bottom: 2rem; color: var(--primary); }
-        nav a {
-            display: block;
-            color: #94a3b8;
-            text-decoration: none;
-            padding: 0.8rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-        }
-        nav a:hover, nav a.active { background: #1e293b; color: white; }
-        
-        /* Main Content */
-        main {
-            margin-left: 260px;
-            padding: 2rem;
-            width: 100%;
-        }
-        header {
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            height: var(--nav-height);
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+        .nav-logo img {
+            height: 50px;
+            transition: transform 0.3s ease;
+          filter: drop-shadow(0 0 5px rgba(191, 149, 63, 0.5)); 
         }
-        .card h3 { margin: 0; font-size: 0.9rem; color: #64748b; }
-        .card p { margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 700; }
-        
-        .btn-logout {
-            background: #ef4444;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            text-decoration: none;
+
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            -webkit-text-stroke: 0.5px #000;
+        }
+
+        .nav-menu-and-indicator {
+            display: flex;
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .payroll-label {
+            color: #ff4d4d;
+            font-weight: 800;
             font-size: 0.9rem;
+            margin-right: 5px;
+            display: none;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .status-indicator.default {
+            background-color: #ffc107;
+            animation: slow-blink 2s ease-in-out infinite alternate;
+            box-shadow: 0 0 8px #ffc107;
+        }
+
+        .status-indicator.alert {
+            background-color: #dc3545;
+            animation: blink 0.8s step-start infinite;
+            box-shadow: 0 0 10px #dc3545;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes slow-blink { 0% { opacity: 1; } 100% { opacity: 0.4; } }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            margin-right: 15px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: #fcf6ba;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            background: var(--gold-gradient);
+            color: #000; /* Texto preto no fundo dourado para contraste */
+            box-shadow: 0 0 15px rgba(191, 149, 63, 0.4);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: 1px solid #bf953f;
+            color: #bf953f;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu-and-indicator {
+                position: fixed;
+                top: var(--nav-height);
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - var(--nav-height));
+                background: #1a1d23;
+                flex-direction: column;
+                padding: 30px;
+                transition: left 0.3s ease;
+                border-top: 2px solid #bf953f;
+                display: none;
+            }
+
+            .nav-menu-and-indicator.active {
+                left: 0;
+                display: flex;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .nav-toggle { display: block; }
+
+            .nav-link {
+                width: 100%;
+                text-align: center;
+                padding: 15px;
+                border-bottom: 1px solid rgba(191, 149, 63, 0.1);
+            }
+        }
+
+        /* CONTEÚDO */
+        .content-frame {
+            width: 100%;
+            height: calc(100vh - var(--nav-height));
+            border: none;
+            display: block;
+            background: #ffffff; /* Fundo branco para os iframes não ficarem pretos antes de carregar */
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <nav>
-        <h2>RF Foundation</h2>
-        <a href="#" class="active">Visão Geral</a>
-        <a href="#">Meus Ativos</a>
-        <a href="#">Relatórios</a>
-        <a href="/logout" style="margin-top: 20px; color: #f87171;">Sair</a>
+        <div class="nav-container">
+            <div class="nav-logo">
+			
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPDs2PW6BfQv8WyN4dYA_LAP8BTk5_AUhHUg&s" alt="Logo B3">
+               <!-- <img src="https://tse3.mm.bing.net/th/id/OIP.nMwPm3PA0tWxw9s5T2wVFwAAAA?rs=1&pid=ImgDetMain" alt="Logo B3"> -->
+                <span class="nav-brand"> Dashboard Financeiro</span>
+            </div>
+            
+            <button class="nav-toggle" id="navToggle">☰</button>
+            
+            <div class="nav-menu-and-indicator">
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#graficos" class="nav-link active" data-page="graficos">NYSE</a></li>
+                    <li><a href="#graficosb3" class="nav-link" data-page="graficosb3">B3</a></li>
+                    <li><a href="#horarios" class="nav-link" data-page="horarios">Bolsas</a></li>
+                    <li><a href="#pdf_arquivos" class="nav-link" data-page="pdf_arquivos">Resultados</a></li>
+                    <li><a href="#cripto" class="nav-link" data-page="cripto">Cripto</a></li>
+                    <li><a href="#calendario" class="nav-link" data-page="calendario">Eventos</a></li>
+                </ul>
+                <span class="payroll-label" id="payrollLabel"></span>
+                <span class="status-indicator" id="statusIndicator"></span>
+            </div>
+        </div>
     </nav>
 
     <main>
-        <header>
-            <h1>Bem-vindo, <span id="user-email">Investidor</span></h1>
-            <a href="/logout" class="btn-logout">Sair do Sistema</a>
-        </header>
+        <div class="page-content active" id="graficos-page">
+            <iframe src="grafico.html" class="content-frame" title="Gráficos e Calendário"></iframe>
+        </div>
+        
+        <div class="page-content" id="graficosb3-page">
+            <iframe src="graficob3.html" class="content-frame" title="Gráficos B3"></iframe>
+        </div>
+        <div class="page-content" id="horarios-page">
+            <iframe src="hora_bolsa.html" class="content-frame" title="Horários das Bolsas"></iframe>
+        </div>
+		
+		<div class="page-content" id="pdf_arquivos-page">
+            <iframe src="pdf_arquivos.html" class="content-frame" title="Balanço Empresarial"></iframe>
+        </div>
 
-        <section class="stats-grid">
-            <div class="card">
-                <h3>Patrimônio Total</h3>
-                <p>R$ 142.500,00</p>
-            </div>
-            <div class="card">
-                <h3>Rendimento (Mês)</h3>
-                <p style="color: #10b981;">+ R$ 2.410,20</p>
-            </div>
-            <div class="card">
-                <h3>Ativos em Carteira</h3>
-                <p>12</p>
-            </div>
-        </section>
+        <div class="page-content" id="cripto-page">
+            <iframe src="cripto.html" class="content-frame" title="Cotações de Criptomoedas"></iframe>
+        </div>
 
-        <section class="card">
-            <h3>Últimas Movimentações</h3>
-            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1rem 0;">
-            <p style="color: #64748b; font-size: 0.9rem;">Nenhuma movimentação recente para exibir.</p>
-        </section>
+        <div class="page-content" id="calendario-page">
+            <iframe src="calendario.html" class="content-frame" title="Calendário Econômico"></iframe>
+        </div>
     </main>
 
     <script>
-        // Opcional: Pegar o email da URL ou do servidor via fetch
-        // Por agora, vamos deixar o servidor injetar ou usar o localStorage
+        // Lógica de Script (Mantida a original, apenas atualizada para o novo design)
+        const navLinks = document.querySelectorAll('.nav-link');
+        const navToggle = document.getElementById('navToggle');
+        const navMenuContainer = document.querySelector('.nav-menu-and-indicator'); 
+        const pages = document.querySelectorAll('.page-content');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const payrollLabel = document.getElementById('payrollLabel');
+
+        function isFirstFridayOfMonth() {
+            const today = new Date();
+            const dayOfMonth = today.getDate();
+            const dayOfWeek = today.getDay();
+            if (dayOfWeek !== 5) return false;
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            let firstDayOfWeek = firstDayOfMonth.getDay();
+            const firstFridayDate = (5 - firstDayOfWeek + 7) % 7 + 1;
+            return dayOfMonth === firstFridayDate;
+        }
+
+        function updateStatusIndicator() {
+            if (isFirstFridayOfMonth()) {
+                statusIndicator.classList.remove('default');
+                statusIndicator.classList.add('alert');
+                payrollLabel.textContent = 'PAYROLL';
+                payrollLabel.style.display = 'block';
+            } else {
+                statusIndicator.classList.remove('alert');
+                statusIndicator.classList.add('default');
+                payrollLabel.style.display = 'none';
+            }
+        }
+
+        updateStatusIndicator();
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPage = link.dataset.page;
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                pages.forEach(page => {
+                    page.classList.toggle('active', page.id === `${targetPage}-page`);
+                });
+                if (window.innerWidth <= 768) navMenuContainer.classList.remove('active');
+                window.history.pushState({}, '', `#${targetPage}`);
+            });
+        });
+
+        navToggle.addEventListener('click', () => {
+            navMenuContainer.classList.toggle('active'); 
+        });
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (!navMenuContainer.contains(e.target) && !navToggle.contains(e.target)) {
+                    navMenuContainer.classList.remove('active');
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1);
+            if (hash && ['graficos', 'graficosb3', 'horarios', 'pdf_arquivos', 'cripto', 'calendario'].includes(hash)) {
+                const targetLink = document.querySelector(`[data-page="${hash}"]`);
+                if (targetLink) targetLink.click();
+            }
+        });
     </script>
 </body>
 </html>

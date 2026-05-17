@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel de Mercado Premium — Black & Gold</title>
+  
+  <style>
+    :root {
+      /* Degradê apenas no topo: cinza médio para branco */
+      --bg-top: #1a1d33; 
+      --bg-bottom: #1a1d23;
+      --card-inner-bg: #ffffff;
+      --header-dark: #1a1d23; 
+      --muted: #ffffff;
+      --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      /* Degradê linear ocupando apenas os primeiros 350px do topo */
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
+      background-repeat: no-repeat;
+      background-color: var(--bg-bottom);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    header { padding: 45px 20px 25px; text-align: center; }
+    header h1 { 
+      margin: 0 0 8px; 
+      font-size: 2.6rem; 
+      font-weight: 900;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+      text-transform: uppercase;
+      -webkit-text-stroke: 1.2px #000;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    }
+    header p { margin: 0; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+    .container { max-width: 1440px; margin: 0 auto; padding: 16px 20px 32px; }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--gold-gradient);
+      border-radius: var(--radius);
+      padding: 3px; 
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease;
+    }
+    .card:hover { transform: translateY(-8px); }
+
+    .card-inner {
+      background: var(--card-inner-bg);
+      border-radius: calc(var(--radius) - 3px);
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card header {
+      padding: 18px 15px;
+      background: var(--header-dark);
+      border-bottom: 2px solid #b38728; 
+      text-align: center;
+      box-shadow: inset 0 -5px 15px rgba(0,0,0,0.6);
+    }
+
+    .card header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      -webkit-text-stroke: 0.8px #000;
+    }
+
+    .frame-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 480px;
+      border: 0;
+      background: #fff;
+    }
+
+     footer {
+      padding: 80px 20px 40px;
+      text-align: center;
+      background: transparent;
+    }
+
+    .footer-content {
+      display: inline-block;
+      padding: 20px 40px;
+      border-top: 1px solid rgba(191, 149, 63, 0.3);
+    }
+
+    .footer-text {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      /* Sombra fina e pequena para destaque */
+      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+      margin: 5px 0;
+    }
+
+    .footer-sub {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+
+    a { 
+      color: inherit; 
+      text-decoration: none; 
+      border-bottom: 1px solid #bf953f;
+    }
+    
+    @media (max-width: 720px) {
+      .frame-wrap { height: 380px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+   <!-- a { color: #854d0e; text-decoration: none; font-weight: 800; }
+    
+    @media (max-width: 720px) {
+      .frame-wrap iframe { height: 380px; }
+      header h1 { font-size: 1.8rem; -webkit-text-stroke: 0.6px #000; }
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 200px);
+    } -->
+	
+  </style>
+</head>
+<body>
+
+  <header>
+  <!--  <h1>Painel de Mercado Premium</h1>
+    <p>Monitoramento de Ativos • Black & Gold Edition</p> -->
+  </header>
+
+  <main class="container">
+    <section class="grid">
+	
+	 <article class="card">
+        <div class="card-inner">
+          <header><h2>Vale ADR (VALE3)</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=13059&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+	  
+	  <article class="card">
+        <div class="card-inner">
+          <header><h2>Banco Itaú (ITUB4)</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=32307&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-inner">
+          <header><h2>Petrobras ADR (PETR4)</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=8028&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+	  
+	   <article class="card">
+        <div class="card-inner">
+          <header><h2>AXIA Energia (AXIA3)</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=20259&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+	  
+	  <article class="card">
+        <div class="card-inner">
+          <header><h2>Banco Bradesco (BBDC4)</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=32327&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+	  
+	   <article class="card">
+        <div class="card-inner">
+          <header><h2>Petróleo Brent</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=8833&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+	  
+
+      
+
+      <article class="card">
+        <div class="card-inner">
+          <header><h2>Índice Futuro Ibovespa</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=941612&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+	  
+	  
+      <article class="card">
+        <div class="card-inner">
+          <header><h2>Índice do Medo VIX</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=44336&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-inner">
+          <header><h2>Dólar / BRL</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=2103&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+
+     
+      <article class="card">
+        <div class="card-inner">
+          <header><h2>Bitcoin USD</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://ssltvc.investing.com/?pair_ID=945629&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-inner">
+          <header><h2>Calendário Econômico</h2></header>
+          <div class="frame-wrap">
+            <iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=110,17,29,25,32,6,37,26,5,22,39,14,48,10,35,7,43,38,4,36,12,72&calType=day&timeZone=12&lang=12"></iframe>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+ <footer>
+    <div class="footer-content">
+      <div class="footer-text">Terminal Financeiro Day trade</div>
+      <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
+	  </div>
+  </footer>
+
+</body>
+</html>
