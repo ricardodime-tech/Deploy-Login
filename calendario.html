@@ -1,126 +1,190 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendário Econômico - Painel de Ativos</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendário Econômico — Black & Gold</title>
+  
+  <style>
+    :root {
+      /* Identidade Black & Gold clonada do grafico.html */
+      --bg-top: #1a1d33; 
+      --bg-bottom: #1a1d23;
+      --card-inner-bg: #ffffff;
+      --header-dark: #1a1d23; 
+      --muted: #ffffff;
+      --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
     
-    <style>
-        /* Variáveis de cor (Dark Mode) copiadas de grafico.html */
-        :root {
-            --bg: #0f1320;
-            --card: #161b2e;
-            --text: #e6e7ea;
-            --muted: #a8adbd;
-            --accent: #3b82f6;
-        }
-        
-        * { box-sizing: border-box; }
-        
-        /* Estilos de corpo e HTML */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: var(--bg);
-            color: var(--text);
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            display: flex; 
-            flex-direction: column; /* Permite que o footer fique no final */
-        }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
+      background-repeat: no-repeat;
+      background-color: var(--bg-bottom);
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* Contêiner principal, similar ao .container do grafico.html */
-        .calendar-container {
-            flex-grow: 1; /* Permite que o conteúdo principal ocupe o espaço */
-            width: 100%;
-            padding: 20px;
-            max-width: 1360px;
-            margin: 0 auto;
-            display: flex; 
-            align-items: stretch;
-        }
-        
-        /* O "Card" que envolve o calendário */
-        .calendar-card {
-            background: var(--card);
-            border: 1px solid #232946;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-            width: 100%;
-            height: 100%; 
-            display: flex;
-            flex-direction: column; 
-        }
+    header.main-header { padding: 45px 20px 25px; text-align: center; }
 
-        /* Estilo do Cabeçalho do Card */
-        .calendar-card header {
-            padding: 10px 12px;
-            border-bottom: 1px solid #232946;
-        }
-        .calendar-card header h1 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text);
-        }
+    .container { 
+      max-width: 1440px; 
+      margin: 0 auto; 
+      padding: 16px 20px 32px;
+      width: 100%;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* CORREÇÃO: Força o card a ocupar toda a largura do container */
+    .card {
+      position: relative;
+      background: var(--gold-gradient);
+      border-radius: var(--radius);
+      padding: 3px; 
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      width: 100%; /* Garante largura total */
+    }
+    .card:hover { transform: translateY(-8px); }
 
-        /* Contêiner principal do widget */
-        #economicCalendarWidget {
-            width: 100%;
-            flex-grow: 1; 
-            min-height: 500px; 
-            overflow: auto;
-        }
+    .card-inner {
+      background: var(--card-inner-bg);
+      border-radius: calc(var(--radius) - 3px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      width: 100%;
+    }
 
-        /* Estilo para a seção de copyright do widget MQL5 (Rodapé do Card) */
-        .ecw-copyright {
-            padding: 10px 12px;
-            border-top: 1px solid #232946;
-            color: var(--muted);
-            font-size: 0.9rem;
-            text-align: center;
-        }
+    /* Cabeçalho do Card interno */
+    .card inner-header {
+      display: block;
+      padding: 18px 15px;
+      background: var(--header-dark);
+      border-bottom: 2px solid #b38728; 
+      text-align: center;
+      box-shadow: inset 0 -5px 15px rgba(0,0,0,0.6);
+    }
 
-        /* Estilo do Rodapé Global (igual ao grafico.html) */
-        footer {
-            padding: 16px 20px 32px;
-            color: var(--muted);
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        footer p {
-             margin: 0; /* Remove margens extras dos parágrafos no footer */
-        }
-        footer p:last-child {
-            margin-top: 10px;
-            font-size: 0.85em;
-        }
+    .card inner-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      -webkit-text-stroke: 0.8px #000;
+    }
 
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
+    /* Contêiner do Widget MQL5 */
+    #economicCalendarWidget {
+      width: 100%;
+      flex-grow: 1; 
+      min-height: 650px; /* Aumentado ligeiramente para melhor leitura */
+      background: #fff;
+    }
+
+    /* Rodapé interno do Widget */
+    .ecw-copyright {
+      padding: 15px;
+      background: #f9f9f9;
+      border-top: 1px solid #eee;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    /* Rodapé Global idêntico ao grafico.html */
+    footer {
+      padding: 80px 20px 40px;
+      text-align: center;
+      background: transparent;
+    }
+
+    .footer-content {
+      display: inline-block;
+      padding: 20px 40px;
+      border-top: 1px solid rgba(191, 149, 63, 0.3);
+    }
+
+    .footer-text {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+      margin: 5px 0;
+    }
+
+    .footer-sub {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+
+    a { 
+      color: inherit; 
+      text-decoration: none; 
+      border-bottom: 1px solid #bf953f;
+    }
+    
+    @media (max-width: 720px) {
+      #economicCalendarWidget { min-height: 450px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="calendar-container">
-        <div class="calendar-card">
-            <header>
-                <h1>Calendário Econômico MQL5</h1>
-            </header>
-            
-            <div id="economicCalendarWidget"></div>
-            
-            <div class="ecw-copyright"><a href="https://www.mql5.com/?utm_source=calendar.widget&utm_medium=link&utm_term=economic.calendar&utm_content=visit.mql5.calendar&utm_campaign=202.calendar.widget" rel="noopener nofollow" target="_blank">MQL5 Algo Trading Community</a></div>
-        </div>
-    </div>
 
-    <script async type="text/javascript" data-type="calendar-widget" src="https://www.tradays.com/c/js/widgets/calendar/widget.js?v=15">
-        {"width":"100%","height":"100%","mode":"2","fw":"html","lang":"pt"}
-    </script>
-    
-    <footer>
-        <p>Atualização em tempo real • Dados dos principais eventos economicos mundiais</p>
-        <p style="margin-top: 10px; font-size: 0.85em;">© 2025 - Informações fornecidas apenas para fins educacionais</p>
-    </footer>
+  <header class="main-header"></header>
+
+  <main class="container">
+    <article class="card">
+      <div class="card-inner">
+        <inner-header>
+          <h2>Calendário Econômico MQL5</h2>
+        </inner-header>
+        
+        <div id="economicCalendarWidget"></div>
+        
+        <div class="ecw-copyright">
+          <a href="https://www.mql5.com/?utm_source=calendar.widget&utm_medium=link&utm_term=economic.calendar&utm_content=visit.mql5.calendar&utm_campaign=202.calendar.widget" rel="noopener nofollow" target="_blank">MQL5 Algo Trading Community</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <script async type="text/javascript" data-type="calendar-widget" src="https://www.tradays.com/c/js/widgets/calendar/widget.js?v=15">
+    {"width":"100%","height":"600px","mode":"2","fw":"html","lang":"pt"}
+  </script>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-text">Terminal Financeiro Day trade</div>
+      <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
+    </div>
+  </footer>
+
 </body>
 </html>
