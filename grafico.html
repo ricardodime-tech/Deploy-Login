@@ -71,6 +71,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .card header {
@@ -94,6 +95,64 @@
       -webkit-text-stroke: 0.8px #000;
     }
 
+    /* Botão da Lupa no canto superior esquerdo */
+    .btn-zoom {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      transition: transform 0.2s ease;
+    }
+    
+    .btn-zoom:hover {
+      transform: scale(1.2);
+    }
+
+    /* Ícone de Lupa de Zoom (+) em CSS Puro */
+    .icon-lupa-zoom {
+      width: 15px;
+      height: 15px;
+      border: 2.5px solid #bf953f;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Cabo da lupa */
+    .icon-lupa-zoom::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      bottom: -6px;
+      width: 2.5px;
+      height: 7px;
+      background: #bf953f;
+      transform: rotate(-45deg);
+      border-radius: 1px;
+    }
+    /* Sinal de mais (+) dentro da lupa */
+    .icon-lupa-zoom::before {
+      content: '+';
+      color: #bf953f;
+      font-size: 14px;
+      font-weight: 900;
+      font-family: sans-serif;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+    }
+
     .frame-wrap iframe {
       display: block;
       width: 100%;
@@ -102,7 +161,85 @@
       background: #fff;
     }
 
-     footer {
+    /* ---- Estilos da Janela Modal ---- */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; 
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--gold-gradient);
+      padding: 3px;
+      border-radius: var(--radius);
+      width: 806px; /* 800px do iframe + 6px de bordas */
+      max-width: 95%;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+      animation: zoomIn 0.3s ease;
+    }
+
+    .modal-inner {
+      background: var(--header-dark);
+      border-radius: calc(var(--radius) - 3px);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #b38728;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .close-modal {
+      color: #bf953f;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 20px;
+    }
+
+    .close-modal:hover {
+      color: #fcf6ba;
+    }
+
+    .modal-body iframe {
+      display: block;
+      width: 100%;
+      height: 600px;
+      border: 0;
+      background: #fff;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    footer {
       padding: 80px 20px 40px;
       text-align: center;
       background: transparent;
@@ -123,7 +260,6 @@
       font-size: 0.95rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      /* Sombra fina e pequena para destaque */
       filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
       margin: 5px 0;
     }
@@ -146,30 +282,21 @@
     @media (max-width: 720px) {
       .frame-wrap { height: 380px; }
       .grid { grid-template-columns: 1fr; }
+      .modal-body iframe { height: 450px; }
     }
-
-   <!-- a { color: #854d0e; text-decoration: none; font-weight: 800; }
-    
-    @media (max-width: 720px) {
-      .frame-wrap iframe { height: 380px; }
-      header h1 { font-size: 1.8rem; -webkit-text-stroke: 0.6px #000; }
-      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 200px);
-    } -->
-	
   </style>
 </head>
 <body>
 
   <header>
-  <!--  <h1>Painel de Mercado Premium</h1>
-    <p>Monitoramento de Ativos • Black & Gold Edition</p> -->
-  </header>
+    </header>
 
   <main class="container">
     <section class="grid">
 	
-	 <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Vale ADR (VALE3)</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=13059&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -177,8 +304,9 @@
         </div>
       </article>
 	  
-	  <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Banco Itaú (ITUB4)</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=32307&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -188,6 +316,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Petrobras ADR (PETR4)</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=8028&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -195,8 +324,9 @@
         </div>
       </article>
 	  
-	   <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>AXIA Energia (AXIA3)</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=20259&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -204,8 +334,9 @@
         </div>
       </article>
 	  
-	  <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Banco Bradesco (BBDC4)</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=32327&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -213,20 +344,19 @@
         </div>
       </article>
 	  
-	   <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Petróleo Brent</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=8833&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
           </div>
         </div>
       </article>
-	  
-
-      
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Índice Futuro Ibovespa</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=941612&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -234,9 +364,9 @@
         </div>
       </article>
 	  
-	  
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Índice do Medo VIX</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=44336&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -246,16 +376,17 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Dólar / BRL</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=2103&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
           </div>
         </div>
       </article>
-
      
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Bitcoin USD</h2></header>
           <div class="frame-wrap">
             <iframe src="https://ssltvc.investing.com/?pair_ID=945629&height=480&width=650&interval=300&plotStyle=candles&domain_ID=30&lang_ID=12&timezone_ID=10"></iframe>
@@ -265,6 +396,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Calendário"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Calendário Econômico</h2></header>
           <div class="frame-wrap">
             <iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=110,17,29,25,32,6,37,26,5,22,39,14,48,10,35,7,43,38,4,36,12,72&calType=day&timeZone=12&lang=12"></iframe>
@@ -275,12 +407,63 @@
     </section>
   </main>
 
+  <div id="graphModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-inner">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Gráfico</h2>
+          <span class="close-modal" id="closeModal">&times;</span>
+        </div>
+        <div class="modal-body">
+          <iframe id="modalIframe" src="" scrolling="no"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
  <footer>
     <div class="footer-content">
       <div class="footer-text">Terminal Financeiro Day trade</div>
       <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
 	  </div>
   </footer>
+
+  <script>
+    const modal = document.getElementById('graphModal');
+    const modalIframe = document.getElementById('modalIframe');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeBtn = document.getElementById('closeModal');
+    const zoomButtons = document.querySelectorAll('.btn-zoom');
+
+    zoomButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const cardInner = this.parentElement;
+        const title = cardInner.querySelector('h2').innerText;
+        const originalUrl = cardInner.querySelector('iframe').getAttribute('src');
+        
+        let modalUrl = originalUrl;
+        if(modalUrl.includes('width=650') || modalUrl.includes('height=480')) {
+          modalUrl = modalUrl.replace('width=650', 'width=800').replace('height=480', 'height=600');
+        }
+
+        modalTitle.innerText = title;
+        modalIframe.setAttribute('src', modalUrl);
+        modal.style.display = 'flex';
+      });
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      modalIframe.setAttribute('src', '');
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+        modalIframe.setAttribute('src', '');
+      }
+    });
+  </script>
 
 </body>
 </html>
