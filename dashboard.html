@@ -213,9 +213,7 @@
     <nav>
         <div class="nav-container">
             <div class="nav-logo">
-			
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPDs2PW6BfQv8WyN4dYA_LAP8BTk5_AUhHUg&s" alt="Logo B3">
-               <!-- <img src="https://tse3.mm.bing.net/th/id/OIP.nMwPm3PA0tWxw9s5T2wVFwAAAA?rs=1&pid=ImgDetMain" alt="Logo B3"> -->
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPDs2PW6BfQv8WyN4dYA_LAP8BTk5_AUhHUg&s" alt="Logo B3">
                 <span class="nav-brand"> Ricardo Trade Software </span>
             </div>
             
@@ -229,8 +227,8 @@
                     <li><a href="#horarios" class="nav-link" data-page="horarios">Bolsas</a></li>
                     <li><a href="#calendario" class="nav-link" data-page="calendario">Eventos</a></li>
                     <li><a href="#pdf_arquivos" class="nav-link" data-page="pdf_arquivos">Resultados</a></li>
-                  
-                  
+                    <!-- Nova Opção IA adicionada abaixo redirecionando para o Gemini externa ou internamente -->
+                    <li><a href="https://gemini.google.com/app?hl=pt-BR" target="_blank" class="nav-link" data-page="inteligencia">IA</a></li>
                 </ul>
                 <span class="payroll-label" id="payrollLabel"></span>
                 <span class="status-indicator" id="statusIndicator"></span>
@@ -249,8 +247,8 @@
         <div class="page-content" id="horarios-page">
             <iframe src="hora_bolsa.html" class="content-frame" title="Horários das Bolsas"></iframe>
         </div>
-		
-		<div class="page-content" id="pdf_arquivos-page">
+        
+        <div class="page-content" id="pdf_arquivos-page">
             <iframe src="pdf_arquivos.html" class="content-frame" title="Balanço Empresarial"></iframe>
         </div>
 
@@ -265,11 +263,9 @@
         <div class="page-content" id="inteligencia-page">
             <iframe src="https://gemini.google.com/app?hl=pt-BR" class="content-frame" title="IA"></iframe>
         </div>
-
     </main>
 
     <script>
-        // Lógica de Script (Mantida a original, apenas atualizada para o novo design)
         const navLinks = document.querySelectorAll('.nav-link');
         const navToggle = document.getElementById('navToggle');
         const navMenuContainer = document.querySelector('.nav-menu-and-indicator'); 
@@ -305,6 +301,11 @@
 
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
+                // Se for o link da IA, deixa o comportamento padrão do navegador abrir a nova aba externa
+                if (link.dataset.page === 'inteligencia') {
+                    return; 
+                }
+                
                 e.preventDefault();
                 const targetPage = link.dataset.page;
                 navLinks.forEach(l => l.classList.remove('active'));
@@ -331,7 +332,7 @@
 
         window.addEventListener('load', () => {
             const hash = window.location.hash.substring(1);
-            if (hash && ['graficos', 'graficosb3', 'horarios', 'pdf_arquivos', 'cripto', 'calendario'].includes(hash)) {
+            if (hash && ['graficos', 'graficosb3', 'horarios', 'pdf_arquivos', 'cripto', 'calendario', 'inteligencia'].includes(hash)) {
                 const targetLink = document.querySelector(`[data-page="${hash}"]`);
                 if (targetLink) targetLink.click();
             }
