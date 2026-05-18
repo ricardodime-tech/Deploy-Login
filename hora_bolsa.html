@@ -12,23 +12,29 @@
         }
 
         :root {
-            --bg-primary: #0f1320;
-            --bg-secondary: #1a1f35;
+            --bg-top: #1a1d33; 
+            --bg-bottom: #1a1d23;
             --text-primary: #e6e7ea;
             --text-secondary: #a8adbd;
             --accent-blue: #667eea;
             --accent-purple: #764ba2;
-            --card-bg: rgba(255, 255, 255, 0.98);
+            --card-inner-bg: #ffffff;
+            --header-dark: #1a1d23;
             --success-bg: #d4edda;
             --success-text: #155724;
             --danger-bg: #f8d7da;
             --danger-text: #721c24;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow: 0 15px 35px rgba(0,0,0,0.15);
+            --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --muted: #ffffff;
+            --radius: 20px;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
+            background-repeat: no-repeat;
+            background-color: var(--bg-bottom);
             min-height: 100vh;
             padding: 20px;
             color: var(--text-primary);
@@ -41,41 +47,6 @@
 
         header {
             margin-bottom: 40px;
-        }
-
-        .logo-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .logo-b3 {
-            height: 70px;
-            filter: brightness(1.1);
-            transition: transform 0.3s ease;
-        }
-
-        .logo-b3:hover {
-            transform: scale(1.05);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        header p {
-            margin: 8px 0;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.5;
         }
 
         .controls {
@@ -105,7 +76,7 @@
 
         .search-box input:focus {
             outline: none;
-            border-color: var(--accent-blue);
+            border-color: #bf953f;
             background: rgba(255, 255, 255, 0.08);
         }
 
@@ -133,100 +104,124 @@
 
         .filter-btn:hover {
             background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
+            border-color: #bf953f;
         }
 
         .filter-btn.active {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            background: var(--gold-gradient);
             border-color: transparent;
-            color: white;
+            color: #000;
+            font-weight: 700;
         }
 
+        /* Alterado para fixar 3 cards por linha */
         .clocks-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
 
         .clock-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
+            position: relative;
+            background: var(--gold-gradient);
+            border-radius: var(--radius);
+            padding: 3px; 
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             opacity: 0;
             animation: fadeIn 0.5s ease forwards;
         }
 
         @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+            to { opacity: 1; }
         }
 
         .clock-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         .clock-card.hidden {
             display: none;
         }
 
-        .exchange-header {
+        .card-inner {
+            background: var(--card-inner-bg);
+            border-radius: calc(var(--radius) - 3px);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+        }
+
+        .card-inner-header {
+            margin: -25px -25px 20px -25px;
+            padding: 18px 15px;
+            background: var(--header-dark);
+            border-bottom: 2px solid #b38728; 
+            text-align: center;
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 8px;
+            justify-content: center;
+            gap: 12px;
         }
 
         .flag-icon {
-            width: 56px;
-            height: 42px;
+            width: 40px;
+            height: 28px;
             object-fit: cover;
-            border-radius: 6px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .exchange-name {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #333;
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            -webkit-text-stroke: 0.5px #000;
         }
 
         .city-name {
             font-size: 0.95em;
             color: #666;
-            margin-bottom: 25px;
-            font-weight: 500;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
         }
 
         .time-display {
-            font-size: 3.2em;
+            font-size: 2.8em;
             font-weight: 700;
-            color: var(--accent-blue);
+            color: #1a1d23;
             text-align: center;
-            margin: 25px 0;
+            margin: 15px 0;
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .date-display {
             text-align: center;
-            color: #666;
+            color: #555;
             margin-bottom: 20px;
-            font-size: 1em;
+            font-size: 0.95em;
             text-transform: capitalize;
+            font-weight: 500;
         }
 
         .status {
             text-align: center;
             padding: 12px;
             border-radius: 12px;
-            font-weight: 600;
-            margin-top: 20px;
-            font-size: 1em;
+            font-weight: 700;
+            margin-top: auto;
+            font-size: 0.9em;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -246,49 +241,65 @@
         .trading-hours {
             text-align: center;
             color: #666;
-            font-size: 0.9em;
+            font-size: 0.85em;
             margin-top: 12px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .countdown {
             text-align: center;
             color: #888;
             font-size: 0.85em;
-            margin-top: 8px;
+            margin-top: 6px;
             font-style: italic;
         }
 
         footer {
-            padding: 30px 20px;
-            color: var(--text-secondary);
+            padding: 80px 20px 40px;
             text-align: center;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 40px;
+            background: transparent;
         }
 
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.4rem;
-            }
-            
-            .time-display {
-                font-size: 2.5em;
-            }
+        .footer-content {
+            display: inline-block;
+            padding: 20px 40px;
+            border-top: 1px solid rgba(191, 149, 63, 0.3);
+        }
 
-            .logo-title {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .footer-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+            margin: 5px 0;
+        }
 
-            .controls {
-                flex-direction: column;
-            }
+        .footer-sub {
+            color: var(--muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
 
-            .search-box {
-                width: 100%;
-            }
+        a { 
+            color: inherit; 
+            text-decoration: none; 
+            border-bottom: 1px solid #bf953f;
+        }
+        
+        /* Garante responsividade em ecrãs pequenos */
+        @media (max-width: 992px) {
+            .clocks-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 720px) {
+            .clocks-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -302,38 +313,14 @@
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
             {
                 "symbols": [
-                    {
-                        "proName": "COINBASE:BTCUSD",
-                        "title": ""
-                    },
-                    {
-                        "proName": "COINBASE:ETHUSD",
-                        "title": ""
-                    },
-                    {
-                        "proName": "COINBASE:XRPUSD",
-                        "title": ""
-                    },
-                    {
-                        "proName": "ACTIVTRADES:USDBRL",
-                        "title": ""
-                    },
-                    {
-                        "proName": "NYSE:VALE",
-                        "title": ""
-                    },
-                    {
-                        "proName": "NYSE:ITUB",
-                        "title": ""
-                    },
-                    {
-                        "proName": "NYSE:PBR.A",
-                        "title": ""
-                    },
-                    {
-                        "proName": "NYSE:BBD",
-                        "title": ""
-                    }
+                    { "proName": "COINBASE:BTCUSD", "title": "" },
+                    { "proName": "COINBASE:ETHUSD", "title": "" },
+                    { "proName": "COINBASE:XRPUSD", "title": "" },
+                    { "proName": "ACTIVTRADES:USDBRL", "title": "" },
+                    { "proName": "NYSE:VALE", "title": "" },
+                    { "proName": "NYSE:ITUB", "title": "" },
+                    { "proName": "NYSE:PBR.A", "title": "" },
+                    { "proName": "NYSE:BBD", "title": "" }
                 ],
                 "colorTheme": "dark",
                 "locale": "br",
@@ -344,11 +331,10 @@
             }
             </script>
         </div>
+        
         <div class="controls">
             <div class="search-box">
-                <input type="text" 
-                       id="searchInput" 
-                       placeholder="🔍 Buscar bolsa ou cidade...">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar bolsa ou cidade...">
             </div>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">Todas</button>
@@ -360,112 +346,24 @@
         <div class="clocks-grid" id="clocksGrid"></div>
 
         <footer>
-            <p>Atualização em tempo real • Dados de horários de negociação das principais bolsas mundiais</p>
-            <p style="margin-top: 10px; font-size: 0.85em;">© 2025 - Informações fornecidas apenas para fins educacionais</p>
+            <div class="footer-content">
+                <div class="footer-text">Terminal Financeiro Day trade</div>
+                <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
+            </div>
         </footer>
     </div>
 
     <script>
         const exchanges = [
-            {
-                name: 'NYSE',
-                city: 'Nova York, EUA',
-                flagCode: 'us',
-                timezone: 'America/New_York',
-                openHour: 9,
-                openMinute: 30,
-                closeHour: 16,
-                closeMinute: 0,
-                tradingHours: '9:30 - 16:00'
-            },
-            {
-                name: 'NASDAQ',
-                city: 'Nova York, EUA',
-                flagCode: 'us',
-                timezone: 'America/New_York',
-                openHour: 9,
-                openMinute: 30,
-                closeHour: 16,
-                closeMinute: 0,
-                tradingHours: '9:30 - 16:00'
-            },
-            {
-                name: 'B3',
-                city: 'São Paulo, Brasil',
-                flagCode: 'br',
-                timezone: 'America/Sao_Paulo',
-                openHour: 10,
-                openMinute: 0,
-                closeHour: 18,
-                closeMinute: 0,
-                tradingHours: '10:00 - 18:00'
-            },
-            {
-                name: 'LSE',
-                city: 'Londres, Reino Unido',
-                flagCode: 'gb',
-                timezone: 'Europe/London',
-                openHour: 8,
-                openMinute: 0,
-                closeHour: 16,
-                closeMinute: 30,
-                tradingHours: '8:00 - 16:30'
-            },
-            {
-                name: 'Euronext',
-                city: 'Paris, França',
-                flagCode: 'fr',
-                timezone: 'Europe/Paris',
-                openHour: 9,
-                openMinute: 0,
-                closeHour: 17,
-                closeMinute: 30,
-                tradingHours: '9:00 - 17:30'
-            },
-            {
-                name: 'Frankfurt',
-                city: 'Frankfurt, Alemanha',
-                flagCode: 'de',
-                timezone: 'Europe/Berlin',
-                openHour: 9,
-                openMinute: 0,
-                closeHour: 17,
-                closeMinute: 30,
-                tradingHours: '9:00 - 17:30'
-            },
-            {
-                name: 'TSE',
-                city: 'Tóquio, Japão',
-                flagCode: 'jp',
-                timezone: 'Asia/Tokyo',
-                openHour: 9,
-                openMinute: 0,
-                closeHour: 15,
-                closeMinute: 0,
-                tradingHours: '9:00 - 15:00'
-            },
-            {
-                name: 'SSE',
-                city: 'Xangai, China',
-                flagCode: 'cn',
-                timezone: 'Asia/Shanghai',
-                openHour: 9,
-                openMinute: 30,
-                closeHour: 15,
-                closeMinute: 0,
-                tradingHours: '9:30 - 15:00'
-            },
-            {
-                name: 'HKEX',
-                city: 'Hong Kong',
-                flagCode: 'hk',
-                timezone: 'Asia/Hong_Kong',
-                openHour: 9,
-                openMinute: 30,
-                closeHour: 16,
-                closeMinute: 0,
-                tradingHours: '9:30 - 16:00'
-            }
+            { name: 'NYSE', city: 'Nova York, EUA', flagCode: 'us', timezone: 'America/New_York', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' },
+            { name: 'NASDAQ', city: 'Nova York, EUA', flagCode: 'us', timezone: 'America/New_York', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' },
+            { name: 'B3', city: 'São Paulo, Brasil', flagCode: 'br', timezone: 'America/Sao_Paulo', openHour: 10, openMinute: 0, closeHour: 18, closeMinute: 0, tradingHours: '10:00 - 18:00' },
+            { name: 'LSE', city: 'Londres, Reino Unido', flagCode: 'gb', timezone: 'Europe/London', openHour: 8, openMinute: 0, closeHour: 16, closeMinute: 30, tradingHours: '8:00 - 16:30' },
+            { name: 'Euronext', city: 'Paris, França', flagCode: 'fr', timezone: 'Europe/Paris', openHour: 9, openMinute: 0, closeHour: 17, closeMinute: 30, tradingHours: '9:00 - 17:30' },
+            { name: 'Frankfurt', city: 'Frankfurt, Alemanha', flagCode: 'de', timezone: 'Europe/Berlin', openHour: 9, openMinute: 0, closeHour: 17, closeMinute: 30, tradingHours: '9:00 - 17:30' },
+            { name: 'TSE', city: 'Tóquio, Japão', flagCode: 'jp', timezone: 'Asia/Tokyo', openHour: 9, openMinute: 0, closeHour: 15, closeMinute: 0, tradingHours: '9:00 - 15:00' },
+            { name: 'SSE', city: 'Xangai, China', flagCode: 'cn', timezone: 'Asia/Shanghai', openHour: 9, openMinute: 30, closeHour: 15, closeMinute: 0, tradingHours: '9:30 - 15:00' },
+            { name: 'HKEX', city: 'Hong Kong', flagCode: 'hk', timezone: 'Asia/Hong_Kong', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' }
         ];
 
         let currentFilter = 'all';
@@ -474,34 +372,25 @@
         function isMarketOpen(exchange, now) {
             const day = now.getDay();
             if (day === 0 || day === 6) return false;
-
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
             const openMinutes = exchange.openHour * 60 + exchange.openMinute;
             const closeMinutes = exchange.closeHour * 60 + exchange.closeMinute;
-
             return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
         }
 
         function getTimeUntilEvent(exchange, now) {
             const day = now.getDay();
-            if (day === 0 || day === 6) {
-                return 'Fechado nos finais de semana';
-            }
-
+            if (day === 0 || day === 6) return 'Fechado nos finais de semana';
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
             const openMinutes = exchange.openHour * 60 + exchange.openMinute;
             const closeMinutes = exchange.closeHour * 60 + exchange.closeMinute;
 
             if (currentMinutes < openMinutes) {
                 const diff = openMinutes - currentMinutes;
-                const hours = Math.floor(diff / 60);
-                const mins = diff % 60;
-                return `Abre em ${hours}h ${mins}min`;
+                return `Abre em ${Math.floor(diff / 60)}h ${diff % 60}min`;
             } else if (currentMinutes < closeMinutes) {
                 const diff = closeMinutes - currentMinutes;
-                const hours = Math.floor(diff / 60);
-                const mins = diff % 60;
-                return `Fecha em ${hours}h ${mins}min`;
+                return `Fecha em ${Math.floor(diff / 60)}h ${diff % 60}min`;
             } else {
                 return 'Mercado fechado';
             }
@@ -509,9 +398,7 @@
 
         function updateClocks() {
             const grid = document.getElementById('clocksGrid');
-            const existingCards = grid.querySelectorAll('.clock-card');
-            
-            if (existingCards.length === 0) {
+            if (grid.querySelectorAll('.clock-card').length === 0) {
                 createAllCards();
             } else {
                 updateCardContents();
@@ -524,34 +411,14 @@
 
             exchanges.forEach((exchange, index) => {
                 const now = new Date();
-                
-                const timeString = now.toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZone: exchange.timezone
-                });
-
-                const dateString = now.toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                    timeZone: exchange.timezone
-                });
-
+                const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: exchange.timezone });
+                const dateString = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', timeZone: exchange.timezone });
                 const localNow = new Date(now.toLocaleString('en-US', { timeZone: exchange.timezone }));
                 const isOpen = isMarketOpen(exchange, localNow);
                 const countdown = getTimeUntilEvent(exchange, localNow);
 
-                const matchesSearch = searchTerm === '' || 
-                    exchange.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    exchange.city.toLowerCase().includes(searchTerm.toLowerCase());
-
-                const matchesFilter = currentFilter === 'all' ||
-                    (currentFilter === 'open' && isOpen) ||
-                    (currentFilter === 'closed' && !isOpen);
-
-                const shouldShow = matchesSearch && matchesFilter;
+                const shouldShow = (searchTerm === '' || exchange.name.toLowerCase().includes(searchTerm.toLowerCase()) || exchange.city.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                                   (currentFilter === 'all' || (currentFilter === 'open' && isOpen) || (currentFilter === 'closed' && !isOpen));
 
                 const card = document.createElement('div');
                 card.className = `clock-card ${!shouldShow ? 'hidden' : ''}`;
@@ -561,97 +428,62 @@
                 const flagUrl = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${exchange.flagCode}.svg`;
                 
                 card.innerHTML = `
-                    <div class="exchange-header">
-                        <img src="${flagUrl}" alt="${exchange.city}" class="flag-icon" loading="lazy">
-                        <div class="exchange-name">${exchange.name}</div>
+                    <div class="card-inner">
+                        <div class="card-inner-header">
+                            <img src="${flagUrl}" alt="${exchange.city}" class="flag-icon" loading="lazy">
+                            <div class="exchange-name">${exchange.name}</div>
+                        </div>
+                        <div class="city-name">${exchange.city}</div>
+                        <div class="time-display" data-field="time">${timeString}</div>
+                        <div class="date-display" data-field="date">${dateString}</div>
+                        <div class="status ${isOpen ? 'open' : 'closed'}" data-field="status">
+                            <span>${isOpen ? '🟢' : '🔴'}</span>
+                            <span>${isOpen ? 'MERCADO ABERTO' : 'MERCADO FECHADO'}</span>
+                        </div>
+                        <div class="trading-hours">Horário de negociação: ${exchange.tradingHours}</div>
+                        <div class="countdown" data-field="countdown">${countdown}</div>
                     </div>
-                    <div class="city-name">${exchange.city}</div>
-                    <div class="time-display" data-field="time">${timeString}</div>
-                    <div class="date-display" data-field="date">${dateString}</div>
-                    <div class="status ${isOpen ? 'open' : 'closed'}" data-field="status">
-                        <span>${isOpen ? '🟢' : '🔴'}</span>
-                        <span>${isOpen ? 'MERCADO ABERTO' : 'MERCADO FECHADO'}</span>
-                    </div>
-                    <div class="trading-hours">
-                        Horário de negociação: ${exchange.tradingHours}
-                    </div>
-                    <div class="countdown" data-field="countdown">${countdown}</div>
                 `;
                 grid.appendChild(card);
             });
         }
 
         function updateCardContents() {
-            exchanges.forEach((exchange, index) => {
+            exchanges.forEach((exchange) => {
                 const card = document.querySelector(`[data-exchange-name="${exchange.name}"]`);
                 if (!card) return;
 
                 const now = new Date();
-                
-                const timeString = now.toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZone: exchange.timezone
-                });
-
-                const dateString = now.toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                    timeZone: exchange.timezone
-                });
-
+                const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: exchange.timezone });
+                const dateString = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', timeZone: exchange.timezone });
                 const localNow = new Date(now.toLocaleString('en-US', { timeZone: exchange.timezone }));
                 const isOpen = isMarketOpen(exchange, localNow);
                 const countdown = getTimeUntilEvent(exchange, localNow);
 
-                const matchesSearch = searchTerm === '' || 
-                    exchange.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    exchange.city.toLowerCase().includes(searchTerm.toLowerCase());
-
-                const matchesFilter = currentFilter === 'all' ||
-                    (currentFilter === 'open' && isOpen) ||
-                    (currentFilter === 'closed' && !isOpen);
-
-                const shouldShow = matchesSearch && matchesFilter;
+                const shouldShow = (searchTerm === '' || exchange.name.toLowerCase().includes(searchTerm.toLowerCase()) || exchange.city.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                                   (currentFilter === 'all' || (currentFilter === 'open' && isOpen) || (currentFilter === 'closed' && !isOpen));
 
                 card.classList.toggle('hidden', !shouldShow);
                 
                 const timeDisplay = card.querySelector('[data-field="time"]');
-                if (timeDisplay && timeDisplay.textContent !== timeString) {
-                    timeDisplay.textContent = timeString;
-                }
+                if (timeDisplay && timeDisplay.textContent !== timeString) timeDisplay.textContent = timeString;
 
                 const dateDisplay = card.querySelector('[data-field="date"]');
-                if (dateDisplay && dateDisplay.textContent !== dateString) {
-                    dateDisplay.textContent = dateString;
-                }
+                if (dateDisplay && dateDisplay.textContent !== dateString) dateDisplay.textContent = dateString;
 
                 const statusDisplay = card.querySelector('[data-field="status"]');
                 const newStatusClass = isOpen ? 'open' : 'closed';
                 if (statusDisplay && !statusDisplay.classList.contains(newStatusClass)) {
                     statusDisplay.className = `status ${newStatusClass}`;
-                    statusDisplay.innerHTML = `
-                        <span>${isOpen ? '🟢' : '🔴'}</span>
-                        <span>${isOpen ? 'MERCADO ABERTO' : 'MERCADO FECHADO'}</span>
-                    `;
+                    statusDisplay.innerHTML = `<span>${isOpen ? '🟢' : '🔴'}</span><span>${isOpen ? 'MERCADO ABERTO' : 'MERCADO FECHADO'}</span>`;
                 }
 
                 const countdownDisplay = card.querySelector('[data-field="countdown"]');
-                if (countdownDisplay && countdownDisplay.textContent !== countdown) {
-                    countdownDisplay.textContent = countdown;
-                }
+                if (countdownDisplay && countdownDisplay.textContent !== countdown) countdownDisplay.textContent = countdown;
             });
         }
         
-        // Busca
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            searchTerm = e.target.value;
-            updateCardContents();
-        });
-
-        // Filtros
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchTerm = e.target.value; updateCardContents(); });
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -661,10 +493,8 @@
             });
         });
 
-        // Inicializa
         createAllCards();
         setInterval(updateClocks, 1000);
-        
     </script>
 </body>
 </html>
