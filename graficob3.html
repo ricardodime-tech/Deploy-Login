@@ -8,7 +8,7 @@
   <style>
     :root {
       /* Padrão de cores e bordas do arquivo original */
-       --bg-top: #1a1d33; 
+      --bg-top: #1a1d33; 
       --bg-bottom: #1a1d23;
       --card-inner-bg: #ffffff;
       --header-dark: #1a1d23; 
@@ -57,6 +57,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
+      position: relative; /* Necessário para posicionar a lupa */
     }
 
     /* Cabeçalho do card idêntico ao arquivo grafico.html */
@@ -81,6 +82,62 @@
       -webkit-text-stroke: 0.8px #000;
     }
 
+    /* Botão da Lupa no canto superior esquerdo */
+    .btn-zoom {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      transition: transform 0.2s ease;
+    }
+    
+    .btn-zoom:hover {
+      transform: scale(1.2);
+    }
+
+    /* Ícone de Lupa de Zoom (+) em CSS Puro */
+    .icon-lupa-zoom {
+      width: 15px;
+      height: 15px;
+      border: 2.5px solid #bf953f;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-lupa-zoom::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      bottom: -6px;
+      width: 2.5px;
+      height: 7px;
+      background: #bf953f;
+      transform: rotate(-45deg);
+      border-radius: 1px;
+    }
+    .icon-lupa-zoom::before {
+      content: '+';
+      color: #bf953f;
+      font-size: 14px;
+      font-weight: 900;
+      font-family: sans-serif;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+    }
+
     /* Altura igualada para 480px conforme o arquivo original */
     .frame-wrap {
       width: 100%;
@@ -91,6 +148,84 @@
     .tradingview-widget-container {
       width: 100%;
       height: 100%;
+    }
+
+    /* ---- Estilos da Janela Modal ---- */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; 
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--gold-gradient);
+      padding: 3px;
+      border-radius: var(--radius);
+      width: 806px; /* 800px do widget + 6px de bordas */
+      max-width: 95%;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+      animation: zoomIn 0.3s ease;
+    }
+
+    .modal-inner {
+      background: var(--header-dark);
+      border-radius: calc(var(--radius) - 3px);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #b38728;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .close-modal {
+      color: #bf953f;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 20px;
+    }
+
+    .close-modal:hover {
+      color: #fcf6ba;
+    }
+
+    .modal-body iframe {
+      display: block;
+      width: 100%;
+      height: 600px;
+      border: 0;
+      background: #ffffff;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
    footer {
@@ -114,7 +249,6 @@
       font-size: 0.95rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      /* Sombra fina e pequena para destaque */
       filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
       margin: 5px 0;
     }
@@ -137,6 +271,7 @@
     @media (max-width: 720px) {
       .frame-wrap { height: 380px; }
       .grid { grid-template-columns: 1fr; }
+      .modal-body iframe { height: 450px; }
     }
   </style>
 </head>
@@ -149,6 +284,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="BMFBOVESPA:VALE3"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Vale do Brasil (VALE3)</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -173,6 +309,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="BMFBOVESPA:ITUB4"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Banco Itaú (ITUB4)</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -196,6 +333,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="BMFBOVESPA:PETR4"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Petrobras (PETR4)</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -219,6 +357,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="BMFBOVESPA:AXIA3"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Axia energia (AXIA3)</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -240,8 +379,9 @@
         </div>
       </article>
 	  
-	   <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="BMFBOVESPA:BBDC4"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Banco Bradesco (BBDC4)</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -263,8 +403,9 @@
         </div>
       </article>
 	  
-	  <article class="card">
+      <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="BMFBOVESPA:BPAC11"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Banco BTG (BPAC11)</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -289,6 +430,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="ACTIVTRADES:USDBRL"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Dólar / BRL</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -312,6 +454,7 @@
 
       <article class="card">
         <div class="card-inner">
+          <button class="btn-zoom" title="Expandir Gráfico" data-symbol="ACTIVTRADES:BRA50"><span class="icon-lupa-zoom"></span></button>
           <header><h2>Índice Ibovespa</h2></header>
           <div class="frame-wrap">
             <div class="tradingview-widget-container">
@@ -336,12 +479,65 @@
     </section>
   </main>
 
+  <div id="graphModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-inner">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Gráfico</h2>
+          <span class="close-modal" id="closeModal">&times;</span>
+        </div>
+        <div class="modal-body">
+          <iframe id="modalIframe" src=""></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
  <footer>
     <div class="footer-content">
       <div class="footer-text">Terminal Financeiro Day trade</div>
       <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
 	  </div>
   </footer>
+
+  <script>
+    const modal = document.getElementById('graphModal');
+    const modalIframe = document.getElementById('modalIframe');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeBtn = document.getElementById('closeModal');
+    const zoomButtons = document.querySelectorAll('.btn-zoom');
+
+    zoomButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const cardInner = this.parentElement;
+        const title = cardInner.querySelector('h2').innerText;
+        
+        // Coleta o ticker do ativo guardado no atributo 'data-symbol' do botão
+        const symbol = this.getAttribute('data-symbol');
+        
+        // Constrói a URL do widget oficial do TradingView em formato iframe estável para a modal (800x600)
+        const embedUrl = `https://s.tradingview.com/widgetembed/?frameElementId=tradingview_modal&symbol=${encodeURIComponent(symbol)}&interval=5&symboledit=0&saveimage=1&toolbarbg=f1f3f6&studies=%5B%22BB%40tv-basicstudies%22%2C%22SAR%40tv-basicstudies%22%5D&theme=light&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=pt&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${encodeURIComponent(symbol)}`;
+
+        // Aplica e exibe identico ao primeiro arquivo
+        modalTitle.innerText = title;
+        modalIframe.setAttribute('src', embedUrl);
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Função de fechamento limpo
+    const closeModalWindow = () => {
+      modal.style.display = 'none';
+      modalIframe.setAttribute('src', '');
+    };
+
+    closeBtn.addEventListener('click', closeModalWindow);
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeModalWindow();
+      }
+    });
+  </script>
 
 </body>
 </html>
