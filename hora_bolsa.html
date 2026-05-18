@@ -294,8 +294,7 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            </header>
+        <header></header>
 
         <div class="tradingview-widget-container">
             <div class="tradingview-widget-container__widget"></div>
@@ -510,15 +509,11 @@
 
         function updateClocks() {
             const grid = document.getElementById('clocksGrid');
-            
-            // Apenas atualiza os cards existentes ao invés de recriar tudo
             const existingCards = grid.querySelectorAll('.clock-card');
             
             if (existingCards.length === 0) {
-                // Primeira renderização - cria os cards
                 createAllCards();
             } else {
-                // Atualiza apenas o conteúdo dos cards existentes
                 updateCardContents();
             }
         }
@@ -528,7 +523,7 @@
             grid.innerHTML = '';
 
             exchanges.forEach((exchange, index) => {
-                const now = new Date(new Date().toLocaleString('pt-BR', { timeZone: exchange.timezone }));
+                const now = new Date();
                 
                 const timeString = now.toLocaleTimeString('pt-BR', {
                     hour: '2-digit',
@@ -544,8 +539,9 @@
                     timeZone: exchange.timezone
                 });
 
-                const isOpen = isMarketOpen(exchange, now);
-                const countdown = getTimeUntilEvent(exchange, now);
+                const localNow = new Date(now.toLocaleString('en-US', { timeZone: exchange.timezone }));
+                const isOpen = isMarketOpen(exchange, localNow);
+                const countdown = getTimeUntilEvent(exchange, localNow);
 
                 const matchesSearch = searchTerm === '' || 
                     exchange.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -590,7 +586,7 @@
                 const card = document.querySelector(`[data-exchange-name="${exchange.name}"]`);
                 if (!card) return;
 
-                const now = new Date(new Date().toLocaleString('en-US', { timeZone: exchange.timezone }));
+                const now = new Date();
                 
                 const timeString = now.toLocaleTimeString('pt-BR', {
                     hour: '2-digit',
@@ -606,8 +602,9 @@
                     timeZone: exchange.timezone
                 });
 
-                const isOpen = isMarketOpen(exchange, now);
-                const countdown = getTimeUntilEvent(exchange, now);
+                const localNow = new Date(now.toLocaleString('en-US', { timeZone: exchange.timezone }));
+                const isOpen = isMarketOpen(exchange, localNow);
+                const countdown = getTimeUntilEvent(exchange, localNow);
 
                 const matchesSearch = searchTerm === '' || 
                     exchange.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -619,7 +616,6 @@
 
                 const shouldShow = matchesSearch && matchesFilter;
 
-                // Atualiza apenas o que mudou
                 card.classList.toggle('hidden', !shouldShow);
                 
                 const timeDisplay = card.querySelector('[data-field="time"]');
@@ -667,7 +663,7 @@
 
         // Inicializa
         createAllCards();
-        setInterval(updateClocks, 1000); // Atualiza os relógios a cada 1 segundo
+        setInterval(updateClocks, 1000);
         
     </script>
 </body>
