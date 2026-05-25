@@ -226,11 +226,10 @@
                     <li><a href="#cripto" class="nav-link" data-page="cripto">Cripto</a></li>
                     <li><a href="#horarios" class="nav-link" data-page="horarios">Bolsas</a></li>
                     <li><a href="#calendario" class="nav-link" data-page="calendario">Eventos</a></li>
-                     <li><a href="#noticias" class="nav-link" data-page="noticias">Notícias</a></li>
+                    <li><a href="#noticias" class="nav-link" data-page="noticias">Notícias</a></li>
                     <li><a href="#pdf_arquivos" class="nav-link" data-page="pdf_arquivos">Resultados</a></li>
-                    <!-- Nova Opção IA adicionada abaixo redirecionando para o Gemini externa ou internamente -->
                     <li><a href="https://copilot.microsoft.com/" target="_blank" class="nav-link" data-page="inteligencia">IA</a></li>
-                     <li><a href="https://ricardoanalister.vercel.app" target="_blank"   class="nav-link" data-page="Sair">Logout</a></li>
+                    <li><a href="index.html" class="nav-link" data-page="Sair">Logout</a></li>
                 </ul>
                 <span class="payroll-label" id="payrollLabel"></span>
                 <span class="status-indicator" id="statusIndicator"></span>
@@ -270,11 +269,7 @@
             <iframe src="https://gemini.google.com/app?hl=pt-BR" class="content-frame" title="IA"></iframe>
         </div>
 
-        <div class="page-content" id="sair-page">
-            <iframe src="https://ricardoanalister.vercel.app" class="content-frame" title="Sair"></iframe>
-        </div>
-
-    </main>
+        </main>
 
     <script>
         const navLinks = document.querySelectorAll('.nav-link');
@@ -312,13 +307,14 @@
 
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                // Se for o link da IA, deixa o comportamento padrão do navegador abrir a nova aba externa
-                if (link.dataset.page === 'inteligencia') {
+                const targetPage = link.dataset.page;
+
+                // CORREÇÃO: Permite que o link de logout e o da IA sigam o comportamento padrão (redirecionar/abrir nova aba)
+                if (targetPage === 'inteligencia' || targetPage === 'Sair') {
                     return; 
                 }
                 
                 e.preventDefault();
-                const targetPage = link.dataset.page;
                 navLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
                 pages.forEach(page => {
