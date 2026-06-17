@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel de Pressão de Mercado — Black & Gold</title>
+  
+  <style>
+    :root {
+      --bg-top: #1a1d33; 
+      --bg-bottom: #1a1d23;
+      --card-inner-bg: #ffffff;
+      --header-dark: #1a1d23; 
+      --muted: #ffffff;
+      --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --accent-blue: #667eea;
+      --accent-purple: #764ba2;
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
+      background-repeat: no-repeat;
+      background-color: var(--bg-bottom);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    header { padding: 45px 20px 25px; text-align: center; }
+
+    .container { max-width: 1440px; margin: 0 auto; padding: 16px 20px 32px; }
+    
+    /* Controles de Filtro */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 12px 28px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--gold-gradient);
+      border-radius: var(--radius);
+      padding: 3px; 
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, opacity 0.3s ease, cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 1;
+    }
+    
+    .card:hover { transform: translateY(-8px); }
+
+    /* Classe para ocultar os cartões filtrados */
+    .card.hidden {
+      display: none;
+      opacity: 0;
+    }
+
+    .card-inner {
+      background: var(--card-inner-bg);
+      border-radius: calc(var(--radius) - 3px);
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-inner header {
+      padding: 18px 15px;
+      background: var(--header-dark);
+      border-bottom: 2px solid #b38728; 
+      text-align: center;
+      box-shadow: inset 0 -5px 15px rgba(0,0,0,0.6);
+    }
+
+    .card-inner header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      -webkit-text-stroke: 0.8px #000;
+    }
+
+    .frame-wrap {
+      width: 100%;
+      height: 450px; 
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .tradingview-widget-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    .tradingview-widget-copyright {
+      display: none; 
+    }
+
+   footer {
+      padding: 80px 20px 40px;
+      text-align: center;
+      background: transparent;
+    }
+
+    .footer-content {
+      display: inline-block;
+      padding: 20px 40px;
+      border-top: 1px solid rgba(191, 149, 63, 0.3);
+    }
+
+    .footer-text {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+      margin: 5px 0;
+    }
+
+    .footer-sub {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 720px) {
+      .frame-wrap { height: 450px; }
+      .grid { grid-template-columns: 1fr; }
+      .controls { margin-bottom: 25px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header></header>
+
+  <main class="container">
+    
+    <div class="controls">
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="forex">Forex</button>
+            <button class="filter-btn" data-filter="cripto">Criptomoedas</button>
+            <button class="filter-btn" data-filter="bovespa">Bovespa</button>
+        </div>
+    </div>
+
+    <section class="grid" id="marketGrid">
+
+      <article class="card" data-category="forex">
+        <div class="card-inner">
+          <header><h2>Análise USDCAD</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "OANDA:USDCAD",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="forex">
+        <div class="card-inner">
+          <header><h2>Análise EURUSD</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "OANDA:EURUSD",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="forex">
+        <div class="card-inner">
+          <header><h2>Análise GBPUSD</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": true,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "OANDA:GBPUSD",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="cripto">
+        <div class="card-inner">
+          <header><h2>Análise Bitcoin (BTCUSD)</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BITSTAMP:BTCUSD",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="cripto">
+        <div class="card-inner">
+          <header><h2>Análise Ethereum (ETHUSD)</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BITSTAMP:ETHUSD",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="cripto">
+        <div class="card-inner">
+          <header><h2>Análise Ripple (XRPUSD)</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BITSTAMP:XRPUSD",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="bovespa">
+        <div class="card-inner">
+          <header><h2>Análise VALE3</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BMFBOVESPA:VALE3",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="bovespa">
+        <div class="card-inner">
+          <header><h2>Análise PETR4</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BMFBOVESPA:PETR4",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="bovespa">
+        <div class="card-inner">
+          <header><h2>Análise ITUB4</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BMFBOVESPA:ITUB4",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="bovespa">
+        <div class="card-inner">
+          <header><h2>Análise AXIA3</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BMFBOVESPA:AXIA3",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="bovespa">
+        <div class="card-inner">
+          <header><h2>Análise BBDC4</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BMFBOVESPA:BBDC4",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-category="bovespa">
+        <div class="card-inner">
+          <header><h2>Análise BPAC11</h2></header>
+          <div class="frame-wrap">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+                "colorTheme": "light",
+                "displayMode": "single",
+                "isTransparent": true,
+                "locale": "br",
+                "interval": "5m",
+                "disableInterval": false,
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BMFBOVESPA:BPAC11",
+                "showIntervalTabs": true
+              }
+              </script>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+ <footer>
+    <div class="footer-content">
+      <div class="footer-text">Terminal Financeiro Day trade</div>
+      <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Remove classe ativa de todos os botões e adiciona no clicado
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        const filterValue = e.target.dataset.filter;
+        const cards = document.querySelectorAll('.card');
+
+        cards.forEach(card => {
+          if (filterValue === 'all') {
+            card.classList.remove('hidden');
+          } else {
+            // Verifica se a categoria do card bate com o filtro selecionado
+            if (card.dataset.category === filterValue) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
