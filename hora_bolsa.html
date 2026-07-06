@@ -114,7 +114,6 @@
             font-weight: 700;
         }
 
-        /* Alterado para fixar 3 cards por linha */
         .clocks-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(300px, 1fr));
@@ -294,7 +293,6 @@
             border-bottom: 1px solid #bf953f;
         }
         
-        /* Garante responsividade em ecrãs pequenos */
         @media (max-width: 992px) {
             .clocks-grid { grid-template-columns: repeat(2, 1fr); }
         }
@@ -355,15 +353,17 @@
 
     <script>
         const exchanges = [
+		    { name: 'B3', city: 'São Paulo, Brasil', flagCode: 'br', timezone: 'America/Sao_Paulo', openHour: 10, openMinute: 0, closeHour: 18, closeMinute: 0, tradingHours: '10:00 - 18:00' },
             { name: 'NYSE', city: 'Nova York, EUA', flagCode: 'us', timezone: 'America/New_York', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' },
             { name: 'NASDAQ', city: 'Nova York, EUA', flagCode: 'us', timezone: 'America/New_York', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' },
-            { name: 'B3', city: 'São Paulo, Brasil', flagCode: 'br', timezone: 'America/Sao_Paulo', openHour: 10, openMinute: 0, closeHour: 18, closeMinute: 0, tradingHours: '10:00 - 18:00' },
             { name: 'LSE', city: 'Londres, Reino Unido', flagCode: 'gb', timezone: 'Europe/London', openHour: 8, openMinute: 0, closeHour: 16, closeMinute: 30, tradingHours: '8:00 - 16:30' },
             { name: 'Euronext', city: 'Paris, França', flagCode: 'fr', timezone: 'Europe/Paris', openHour: 9, openMinute: 0, closeHour: 17, closeMinute: 30, tradingHours: '9:00 - 17:30' },
             { name: 'Frankfurt', city: 'Frankfurt, Alemanha', flagCode: 'de', timezone: 'Europe/Berlin', openHour: 9, openMinute: 0, closeHour: 17, closeMinute: 30, tradingHours: '9:00 - 17:30' },
             { name: 'TSE', city: 'Tóquio, Japão', flagCode: 'jp', timezone: 'Asia/Tokyo', openHour: 9, openMinute: 0, closeHour: 15, closeMinute: 0, tradingHours: '9:00 - 15:00' },
             { name: 'SSE', city: 'Xangai, China', flagCode: 'cn', timezone: 'Asia/Shanghai', openHour: 9, openMinute: 30, closeHour: 15, closeMinute: 0, tradingHours: '9:30 - 15:00' },
-            { name: 'HKEX', city: 'Hong Kong', flagCode: 'hk', timezone: 'Asia/Hong_Kong', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' }
+            { name: 'HKEX', city: 'Hong Kong', flagCode: 'hk', timezone: 'Asia/Hong_Kong', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' },
+            { name: 'ASX', city: 'Sydney, Austrália', flagCode: 'au', timezone: 'Australia/Sydney', openHour: 10, openMinute: 0, closeHour: 16, closeMinute: 0, tradingHours: '10:00 - 16:00' },
+            { name: 'TSX', city: 'Toronto, Canadá', flagCode: 'ca', timezone: 'America/Toronto', openHour: 9, openMinute: 30, closeHour: 16, closeMinute: 0, tradingHours: '9:30 - 16:00' }
         ];
 
         let currentFilter = 'all';
