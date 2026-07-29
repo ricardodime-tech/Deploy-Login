@@ -235,13 +235,91 @@
             color: #000;
             font-weight: 700;
             border-radius: 10px;
-            text-decoration: none;
+            border: none;
+            cursor: pointer;
             margin-top: auto;
             transition: opacity 0.3s ease;
+            font-size: 1rem;
         }
 
         .btn-access:hover {
             opacity: 0.9;
+        }
+
+        /* Modal CSS Ajustado para Maior Largura */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #1a1d23;
+            border: 2px solid #b38728;
+            border-radius: 15px;
+            width: 95%; /* Expandido de 90% para 95% */
+            max-width: 1400px; /* Expandido de 1100px para 1400px */
+            height: 92vh; /* Leve ajuste de altura para melhor encaixe proporção */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            background: #0f1117;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(179, 135, 40, 0.4);
+        }
+
+        .modal-title {
+            color: #e6e7ea;
+            font-size: 1.1rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 15px;
+        }
+
+        .close-modal {
+            color: var(--text-secondary);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #bf953f;
+        }
+
+        .modal-body {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+        }
+
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         footer {
@@ -283,6 +361,10 @@
         }
         @media (max-width: 720px) {
             .books-grid { grid-template-columns: 1fr; }
+            .modal-content {
+                width: 98%;
+                height: 96vh;
+            }
         }
     </style>
 </head>
@@ -315,6 +397,19 @@
         </footer>
     </div>
 
+    <!-- Estrutura do Modal -->
+    <div id="pdfModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle" class="modal-title">Visualizando Documento</h3>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdfFrame" src="" title="Visualizador de PDF"></iframe>
+            </div>
+        </div>
+    </div>
+
     <script>
         const books = [
             {
@@ -322,91 +417,104 @@
                 author: 'Portal do Investidor',
                 category: 'daytrade',
                 categoryLabel: 'Day Trade',
-                image: 'https://rictrade.vercel.app/estudo/01-Day-Trade-Autor-Portal-do-Investidor.pdf'
+                image: 'https://i.ibb.co/mrJcB4Qt/01-Day-Trade-Autor-Portal-do-Investidor.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/01-Day-Trade-Autor-Portal-do-Investidor.pdf'
             },
             {
                 title: 'Introdução ao Day Trade em Dólar e Índice Futuro',
                 author: 'Escola de Operadores',
                 category: 'daytrade',
                 categoryLabel: 'Day Trade',
-                image: 'https://rictrade.vercel.app/estudo/02-Introducao-ao-day-trade-em-dolar-e-indice-futuro-escola-de-operadores.jpg'
+                image: 'https://i.ibb.co/RGmYWxNZ/02-Introducao-ao-day-trade-em-dolar-e-indice-futuro-escola-de-operadores.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/02-Introducao-ao-day-trade-em-dolar-e-indice-futuro-escola-de-operadores.pdf'
             },
             {
                 title: 'Vivendo de Day Trade: A Trilha de Sucesso para Traders Iniciantes',
                 author: 'Autor Independente',
                 category: 'daytrade',
                 categoryLabel: 'Day Trade',
-                image: 'https://rictrade.vercel.app/estudo/03-Vivendo-de-day-trade-a-trilha-de-sucesso-para-traders-iniciantes.jpg'
+                image: 'https://i.ibb.co/VYV0nvBb/03-Vivendo-de-day-trade-a-trilha-de-sucesso-para-traders-iniciantes.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/03-Vivendo-de-day-trade-a-trilha-de-sucesso-para-traders-iniciantes.pdf'
             },
             {
                 title: 'Análise Técnica: Operando Através de Gráficos',
                 author: 'Clear Corretora',
                 category: 'analise',
                 categoryLabel: 'Análise Técnica',
-                image: 'https://rictrade.vercel.app/estudo/04-Analise-tecnica-operando-atraves-de-graficos-clear-corretora.jpg'
+                image: 'https://i.ibb.co/1SCqWS1/04-Analise-tecnica-operando-atraves-de-graficos-clear-corretora.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/04-Analise-tecnica-operando-atraves-de-graficos-clear-corretora.pdf'
             },
             {
                 title: 'Como Ser um Trader Profissional',
                 author: 'Flash Trader',
                 category: 'daytrade',
                 categoryLabel: 'Day Trade',
-                image: 'https://rictrade.vercel.app/estudo/05-Como-ser-um-trader-profissional-Autor-Flash-Trader.jpg'
+                image: 'https://i.ibb.co/kg9bXtC8/05-Como-ser-um-trader-profissional-Autor-Flash-Trader.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/05-Como-ser-um-trader-profissional-Autor-Flash-Trader.pdf'
             },
             {
                 title: 'Guia Básico de Análise Técnica',
                 author: 'Guia do Mercado',
                 category: 'analise',
                 categoryLabel: 'Análise Técnica',
-                image: 'https://rictrade.vercel.app/estudo/06-Guia-basico-de-analise-tecnica.jpg'
+                image: 'https://i.ibb.co/GfqpbN0N/06-Guia-basico-de-analise-tecnica.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/06-Guia-basico-de-analise-tecnica.pdf'
             },
             {
                 title: 'Guia do Trader: Saiba Tudo Sobre a Profissão',
                 author: 'Modalmais',
                 category: 'daytrade',
                 categoryLabel: 'Day Trade',
-                image: 'https://rictrade.vercel.app/estudo/07-Guia-do-trader-Saiba-tudo-sobre-a-profiss-o-Autor-Modalmais.jpg'
+                image: 'https://i.ibb.co/WvdFcrqG/07-Guia-do-trader-Saiba-tudo-sobre-a-profiss-o-Autor-Modalmais.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/07-Guia-do-trader-Saiba-tudo-sobre-a-profiss-o-Autor-Modalmais.pdf'
             },
             {
                 title: '100 Dicas para o Trader',
                 author: 'Leandro Martins',
                 category: 'estrategias',
                 categoryLabel: 'Estratégias',
-                image: 'https://rictrade.vercel.app/estudo/08-100-Dicas-para-o-Trader-Autor-Leandro-Martins.jpg'
+                image: 'https://i.ibb.co/XrcJLvJp/08-100-Dicas-para-o-Trader-Autor-Leandro-Martins.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/08-100-Dicas-para-o-Trader-Autor-Leandro-Martins.pdf'
             },
             {
                 title: 'Principais Sinais de Padrões de Candlestick',
                 author: 'Trader Guide',
                 category: 'analise',
                 categoryLabel: 'Análise Técnica',
-                image: 'https://rictrade.vercel.app/estudo/09-Principais-sinais-de-padroes-de-candlestick-trader.jpg'
+                image: 'https://i.ibb.co/j9jZN0m3/09-Principais-sinais-de-padroes-de-candlestick-trader.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/09-Principais-sinais-de-padroes-de-candlestick-trader.pdf'
             },
             {
                 title: 'Eficazes Estratégias de Trading',
                 author: 'Valutrades',
                 category: 'estrategias',
                 categoryLabel: 'Estratégias',
-                image: 'https://rictrade.vercel.app/estudo/10-Eficaz-estrategias-valutrades.jpg'
+                image: 'https://i.ibb.co/Z6Lsr6xs/10-Eficaz-estrategias-valutrades.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/10-Eficaz-estrategias-valutrades.pdf'
             },
             {
                 title: 'Estratégias Comerciais Forex',
                 author: 'IFC Markets',
                 category: 'estrategias',
                 categoryLabel: 'Estratégias',
-                image: 'https://rictrade.vercel.app/estudo/11-Estrategias-comerciais-forex-ifc-markets.jpg'
+                image: 'https://i.ibb.co/1tMH8BbL/11-Estrategias-comerciais-forex-ifc-markets.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/11-Estrategias-comerciais-forex-ifc-markets.pdf'
             },
             {
                 title: 'Como Funciona a Bolsa de Valores',
                 author: 'Portal do Investidor',
                 category: 'analise',
                 categoryLabel: 'Bolsa de Valores',
-                image: 'https://rictrade.vercel.app/estudo/12-Como-funciona-a-bolsa-de-valores-portal-do-investidor.jpg'
+                image: 'https://i.ibb.co/gLR5YjQc/12-Como-funciona-a-bolsa-de-valores-portal-do-investidor.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/12-Como-funciona-a-bolsa-de-valores-portal-do-investidor.pdf'
             },
             {
                 title: 'Manual de Bolsa: Aprenda a Investir na Bolsa do Zero',
                 author: 'Manual de Bolsa',
                 category: 'analise',
                 categoryLabel: 'Bolsa de Valores',
-                image: 'https://rictrade.vercel.app/estudo/13-Manual-de-bolsa-aprenda-a-investir-na-bolsa-do-zero.jpg'
+                image: 'https://i.ibb.co/zVgZ49dQ/13-Manual-de-bolsa-aprenda-a-investir-na-bolsa-do-zero.jpg',
+                pdf: 'https://rictrade.vercel.app/estudo/13-Manual-de-bolsa-aprenda-a-investir-na-bolsa-do-zero.pdf'
             }
         ];
 
@@ -440,12 +548,45 @@
                         </div>
                         <div class="book-title">${book.title}</div>
                         <div class="book-author">Autor / Fonte: ${book.author}</div>
-                        <a href="${book.image}" target="_blank" rel="noopener noreferrer" class="btn-access">Visualizar Capa</a>
+                        <button onclick="openModal('${book.pdf}', '${book.title.replace(/'/g, "\\'")}')" class="btn-access">Ler PDF</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
+
+        // Funções da Modal
+        const modal = document.getElementById('pdfModal');
+        const pdfFrame = document.getElementById('pdfFrame');
+        const modalTitle = document.getElementById('modalTitle');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        function openModal(pdfUrl, title) {
+            modalTitle.textContent = title;
+            pdfFrame.src = pdfUrl;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            pdfFrame.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal.style.display === 'flex') {
+                closeModal();
+            }
+        });
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchTerm = e.target.value;
