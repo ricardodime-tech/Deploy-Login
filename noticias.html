@@ -10,6 +10,7 @@
       /* Cores do painel original */
       --bg-top: #1a1d33; 
       --bg-bottom: #1a1d23;
+      --text-secondary: #a8adbd;
       --muted: #ffffff;
       --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
     }
@@ -41,7 +42,6 @@
       -webkit-text-stroke: 1.2px #000;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
     }
-    header p { margin: 0; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
     .page-title {
             font-size: 2.2rem;
@@ -52,12 +52,13 @@
             background-clip: text;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
     .page-subtitle {
             color: var(--text-secondary);
             font-size: 1rem;
+            text-transform: none;
         }
 
     /* Estilo do Botão de Atualizar */
@@ -170,7 +171,7 @@
 
   <header>
     <h1>Notícias</h1>
-    <p class="page-subtitle">Informações de Mercado em tempo real</p>
+    <p class="page-subtitle">Informações de mercado em tempo real</p>
     <button class="refresh-btn" onclick="carregarNoticias()">🔄 Atualizar</button>
   </header>
 
@@ -191,7 +192,6 @@
       const container = document.getElementById("feed");
       
       try {
-        // Feedback visual limpando a tela antes de buscar novas notícias
         container.innerHTML = "<p style='color: #ffffff; text-align: center; font-weight: bold; opacity: 0.7;'>Buscando notícias recentes...</p>"; 
 
         const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
@@ -215,7 +215,6 @@
       }
     }
 
-    // Inicializa a primeira carga ao abrir a página
     carregarNoticias();
   </script>
 </body>
