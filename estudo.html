@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca do Trader - Livros e Guias Recomendados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-top: #1a1d33; 
+            --bg-bottom: #1a1d23;
+            --text-primary: #e6e7ea;
+            --text-secondary: #a8adbd;
+            --card-inner-bg: #ffffff;
+            --header-dark: #1a1d23;
+            --shadow: 0 15px 35px rgba(0,0,0,0.25);
+            --gold-gradient: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --muted: #ffffff;
+            --radius: 20px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
+            background-repeat: no-repeat;
+            background-color: var(--bg-bottom);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin: 30px 0 40px;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #bf953f;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #bf953f;
+        }
+
+        .filter-btn.active {
+            background: var(--gold-gradient);
+            border-color: transparent;
+            color: #000;
+            font-weight: 700;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .book-card {
+            position: relative;
+            background: var(--gold-gradient);
+            border-radius: var(--radius);
+            padding: 3px; 
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .book-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .book-card.hidden {
+            display: none;
+        }
+
+        .card-inner {
+            background: var(--card-inner-bg);
+            border-radius: calc(var(--radius) - 3px);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .card-inner-header {
+            margin: -20px -20px 15px -20px;
+            padding: 15px;
+            background: var(--header-dark);
+            border-bottom: 2px solid #b38728; 
+            text-align: center;
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.6);
+        }
+
+        .book-category {
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #0f1117;
+            margin-bottom: 15px;
+        }
+
+        .book-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .book-card:hover .book-image {
+            transform: scale(1.03);
+        }
+
+        .book-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1d23;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn-access {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background: var(--gold-gradient);
+            color: #000;
+            font-weight: 700;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-top: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-access:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            padding: 60px 20px 40px;
+            text-align: center;
+            background: transparent;
+        }
+
+        .footer-content {
+            display: inline-block;
+            padding: 20px 40px;
+            border-top: 1px solid rgba(191, 149, 63, 0.3);
+        }
+
+        .footer-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+            margin: 5px 0;
+        }
+
+        .footer-sub {
+            color: var(--muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 992px) {
+            .books-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 720px) {
+            .books-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="page-title">Biblioteca do Trader</h1>
+            <p class="page-subtitle">Principais guias, e-books e manuais de mercado financeiro</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar livro, autor ou tema...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="daytrade">Day Trade</button>
+                <button class="filter-btn" data-filter="analise">Análise Técnica</button>
+                <button class="filter-btn" data-filter="estrategias">Estratégias</button>
+            </div>
+        </div>
+
+        <div class="books-grid" id="booksGrid"></div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-text">Terminal Financeiro Day Trade</div>
+                <div class="footer-sub">© 2026 • Ricardo Campos - Trader & Holder</div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const books = [
+            {
+                title: 'Day Trade',
+                author: 'Portal do Investidor',
+                category: 'daytrade',
+                categoryLabel: 'Day Trade',
+                image: 'https://i.ibb.co/mrJcB4Qt/01-Day-Trade-Autor-Portal-do-Investidor.jpg'
+            },
+            {
+                title: 'Introdução ao Day Trade em Dólar e Índice Futuro',
+                author: 'Escola de Operadores',
+                category: 'daytrade',
+                categoryLabel: 'Day Trade',
+                image: 'https://i.ibb.co/RGmYWxNZ/02-Introducao-ao-day-trade-em-dolar-e-indice-futuro-escola-de-operadores.jpg'
+            },
+            {
+                title: 'Vivendo de Day Trade: A Trilha de Sucesso para Traders Iniciantes',
+                author: 'Autor Independente',
+                category: 'daytrade',
+                categoryLabel: 'Day Trade',
+                image: 'https://i.ibb.co/VYV0nvBb/03-Vivendo-de-day-trade-a-trilha-de-sucesso-para-traders-iniciantes.jpg'
+            },
+            {
+                title: 'Análise Técnica: Operando Através de Gráficos',
+                author: 'Clear Corretora',
+                category: 'analise',
+                categoryLabel: 'Análise Técnica',
+                image: 'https://i.ibb.co/1SCqWS1/04-Analise-tecnica-operando-atraves-de-graficos-clear-corretora.jpg'
+            },
+            {
+                title: 'Como Ser um Trader Profissional',
+                author: 'Flash Trader',
+                category: 'daytrade',
+                categoryLabel: 'Day Trade',
+                image: 'https://i.ibb.co/kg9bXtC8/05-Como-ser-um-trader-profissional-Autor-Flash-Trader.jpg'
+            },
+            {
+                title: 'Guia Básico de Análise Técnica',
+                author: 'Guia do Mercado',
+                category: 'analise',
+                categoryLabel: 'Análise Técnica',
+                image: 'https://i.ibb.co/GfqpbN0N/06-Guia-basico-de-analise-tecnica.jpg'
+            },
+            {
+                title: 'Guia do Trader: Saiba Tudo Sobre a Profissão',
+                author: 'Modalmais',
+                category: 'daytrade',
+                categoryLabel: 'Day Trade',
+                image: 'https://i.ibb.co/WvdFcrqG/07-Guia-do-trader-Saiba-tudo-sobre-a-profiss-o-Autor-Modalmais.jpg'
+            },
+            {
+                title: '100 Dicas para o Trader',
+                author: 'Leandro Martins',
+                category: 'estrategias',
+                categoryLabel: 'Estratégias',
+                image: 'https://i.ibb.co/XrcJLvJp/08-100-Dicas-para-o-Trader-Autor-Leandro-Martins.jpg'
+            },
+            {
+                title: 'Principais Sinais de Padrões de Candlestick',
+                author: 'Trader Guide',
+                category: 'analise',
+                categoryLabel: 'Análise Técnica',
+                image: 'https://i.ibb.co/j9jZN0m3/09-Principais-sinais-de-padroes-de-candlestick-trader.jpg'
+            },
+            {
+                title: 'Eficazes Estratégias de Trading',
+                author: 'Valutrades',
+                category: 'estrategias',
+                categoryLabel: 'Estratégias',
+                image: 'https://i.ibb.co/Z6Lsr6xs/10-Eficaz-estrategias-valutrades.jpg'
+            },
+            {
+                title: 'Estratégias Comerciais Forex',
+                author: 'IFC Markets',
+                category: 'estrategias',
+                categoryLabel: 'Estratégias',
+                image: 'https://i.ibb.co/1tMH8BbL/11-Estrategias-comerciais-forex-ifc-markets.jpg'
+            },
+            {
+                title: 'Como Funciona a Bolsa de Valores',
+                author: 'Portal do Investidor',
+                category: 'analise',
+                categoryLabel: 'Bolsa de Valores',
+                image: 'https://i.ibb.co/gLR5YjQc/12-Como-funciona-a-bolsa-de-valores-portal-do-investidor.jpg'
+            },
+            {
+                title: 'Manual de Bolsa: Aprenda a Investir na Bolsa do Zero',
+                author: 'Manual de Bolsa',
+                category: 'analise',
+                categoryLabel: 'Bolsa de Valores',
+                image: 'https://i.ibb.co/zVgZ49dQ/13-Manual-de-bolsa-aprenda-a-investir-na-bolsa-do-zero.jpg'
+            }
+        ];
+
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        function renderBooks() {
+            const grid = document.getElementById('booksGrid');
+            grid.innerHTML = '';
+
+            books.forEach((book, index) => {
+                const matchesSearch = searchTerm === '' || 
+                    book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                    book.author.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                const matchesFilter = currentFilter === 'all' || book.category === currentFilter;
+
+                const shouldShow = matchesSearch && matchesFilter;
+
+                const card = document.createElement('div');
+                card.className = `book-card ${!shouldShow ? 'hidden' : ''}`;
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-inner-header">
+                            <span class="book-category">${book.categoryLabel}</span>
+                        </div>
+                        <div class="image-container">
+                            <img src="${book.image}" alt="${book.title}" class="book-image" loading="lazy">
+                        </div>
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">Autor / Fonte: ${book.author}</div>
+                        <a href="${book.image}" target="_blank" rel="noopener noreferrer" class="btn-access">Visualizar Capa</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderBooks();
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                renderBooks();
+            });
+        });
+
+        renderBooks();
+    </script>
+</body>
+</html>
