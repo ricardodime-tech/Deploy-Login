@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feed de Notícias Financeiras — InfoMoney</title>
+  <title>Feed de Notícias Financeiras</title>
   
   <style>
     :root {
@@ -21,7 +21,6 @@
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      /* Degradê linear do topo igual ao gráfico */
       background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 350px);
       background-repeat: no-repeat;
       background-color: var(--bg-bottom);
@@ -43,23 +42,11 @@
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
     }
 
-    .page-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            background: var(--gold-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
     .page-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            text-transform: none;
-        }
+      color: var(--text-secondary);
+      font-size: 1rem;
+      text-transform: none;
+    }
 
     /* Estilo do Botão de Atualizar */
     .refresh-btn {
@@ -87,10 +74,8 @@
       transform: translateY(0);
     }
 
-    /* Alteração no max-width de 800px para 1100px para ampliar a largura do quadro */
     .container { max-width: 1100px; margin: 0 auto; padding: 16px 20px 32px; }
     
-    /* Layout das notícias estruturado sem as bordas ou cores douradas */
     .news-container {
       display: flex;
       flex-direction: column;
@@ -102,9 +87,23 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      position: relative;
     }
 
-    /* Títulos normais, sem efeito dourado */
+    /* Tag de identificação da fonte */
+    .source-tag {
+      display: inline-block;
+      background: #1a1d33;
+      color: #fcf6ba;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     .news-item h2 {
       font-size: 18px;
       margin: 0 0 10px;
@@ -119,7 +118,6 @@
       margin: 0 0 15px 0;
     }
 
-    /* Link padrão discreto */
     .news-item a {
       text-decoration: none;
       color: #b38728;
@@ -188,24 +186,61 @@
   </footer>
 
   <script>
+    // Lista de fontes configuradas
+    const fontes = [
+      { nome: "InfoMoney", url: "https://www.infomoney.com.br/feed/" },
+      { nome: "Valor Econômico", url: "https://valor.globo.com/rss/financas/" }
+    ];
+
     async function carregarNoticias() {
-      const rssUrl = "https://www.infomoney.com.br/feed/";
       const container = document.getElementById("feed");
       
       try {
         container.innerHTML = "<p style='color: #ffffff; text-align: center; font-weight: bold; opacity: 0.7;'>Buscando notícias recentes...</p>"; 
 
-        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
-        const data = await response.json();
+        // Requisições paralelas para todas as fontes
+        const requisicoes = fontes.map(fonte => 
+          fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fonte.url)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (!data.items) return [];
+              // Mapeia adicionando o nome da fonte
+              return data.items.map(item => ({ ...item, fonteNome: fonte.nome }));
+            })
+            .catch(() => [])
+        );
+
+        const resultados = await Promise.all(requisicoes);
+        
+        // Junta todas as notícias em um único array
+        let todasNoticias = resultados.flat();
+
+        // Ordena pela data de publicação (mais recentes primeiro)
+        todasNoticias.sort((a, b) => new Date(b.pubDate.replace(" ", "T") + "Z") - new Date(a.pubDate.replace(" ", "T") + "Z"));
 
         container.innerHTML = ""; 
 
-        data.items.forEach(item => {
+        if (todasNoticias.length === 0) {
+          container.innerHTML = "<p style='color: #ff4a4a; text-align: center; font-weight: bold;'>Nenhuma notícia encontrada.</p>";
+          return;
+        }
+
+        todasNoticias.forEach(item => {
+          const utcDateString = item.pubDate.replace(" ", "T") + "Z";
+          const dataFormatada = new Date(utcDateString).toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+
           const div = document.createElement("div");
           div.className = "news-item";
           div.innerHTML = `
+            <span class="source-tag">${item.fonteNome}</span>
             <h2>${item.title}</h2>
-            <p>📅 ${new Date(item.pubDate).toLocaleString("pt-BR")}</p>
+            <p>📅 ${dataFormatada}</p>
             <a href="${item.link}" target="_blank">Leia mais →</a>
           `;
           container.appendChild(div);
