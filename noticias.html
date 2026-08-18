@@ -61,7 +61,7 @@
       border-radius: 5px;
       cursor: pointer;
       margin-top: 20px;
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -72,12 +72,6 @@
 
     .refresh-btn:active {
       transform: translateY(0);
-    }
-
-    .refresh-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
     }
 
     .container { max-width: 1100px; margin: 0 auto; padding: 16px 20px 32px; }
@@ -177,7 +171,7 @@
   <header>
     <h1>Notícias</h1>
     <p class="page-subtitle">Informações de mercado do Brasil e do mundo em tempo real</p>
-    <button id="btn-refresh" class="refresh-btn" onclick="carregarNoticias()">🔄 Atualizar</button>
+    <button class="refresh-btn" onclick="carregarNoticias()">🔄 Atualizar</button>
   </header>
 
   <main class="container">
@@ -192,39 +186,35 @@
   </footer>
 
   <script>
-    // Lista de fontes configuradas
+    // Lista de fontes com feeds válidos e sem bloqueio CORS
     const fontes = [
       { nome: "InfoMoney", url: "https://www.infomoney.com.br/feed/" },
-      { nome: "Valor Econômico", url: "https://valor.globo.com/rss/financas/" }
+      { nome: "Valor Investe", url: "https://valorinveste.globo.com/rss/valorinveste/" },
+      { nome: "G1 Economia", url: "https://g1.globo.com/dynamo/economia/rss2.xml" }
     ];
 
     async function carregarNoticias() {
       const container = document.getElementById("feed");
-      const btn = document.getElementById("btn-refresh");
       
-      // Desabilita botão temporariamente para evitar cliques repetidos
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = "⏳ Atualizando...";
-      }
-
       try {
         container.innerHTML = "<p style='color: #ffffff; text-align: center; font-weight: bold; opacity: 0.7;'>Buscando notícias recentes...</p>"; 
 
-        // Timestamp para ignorar o cache (Cache Busting)
-        const cacheBuster = Date.now();
-
         // Requisições paralelas para todas as fontes
         const requisicoes = fontes.map(fonte => 
-          fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fonte.url)}&_t=${cacheBuster}`, {
-            cache: "no-store"
-          })
+          fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fonte.url)}`)
             .then(res => res.json())
             .then(data => {
-              if (!data.items) return [];
+              if (data.status !== 'ok' || !data.items) {
+                console.warn(`Erro ao processar feed da fonte: ${fonte.nome}`);
+                return [];
+              }
+              // Mapeia adicionando o nome da fonte
               return data.items.map(item => ({ ...item, fonteNome: fonte.nome }));
             })
-            .catch(() => [])
+            .catch(err => {
+              console.error(`Erro na requisição da fonte ${fonte.nome}:`, err);
+              return [];
+            })
         );
 
         const resultados = await Promise.all(requisicoes);
@@ -265,16 +255,9 @@
       } catch (error) {
         console.error("Erro ao carregar notícias:", error);
         container.innerHTML = "<p style='color: #ff4a4a; text-align: center; font-weight: bold;'>Erro ao atualizar o feed. Tente novamente.</p>";
-      } finally {
-        // Reativa o botão
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = "🔄 Atualizar";
-        }
       }
     }
 
-    // Carregamento inicial ao abrir a página
     carregarNoticias();
   </script>
 </body>
