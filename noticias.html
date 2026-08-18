@@ -186,7 +186,6 @@
   </footer>
 
   <script>
-    // Lista de fontes com feeds válidos e sem bloqueio CORS
     const fontes = [
       { nome: "InfoMoney", url: "https://www.infomoney.com.br/feed/" },
       { nome: "Valor Investe", url: "https://valorinveste.globo.com/rss/valorinveste/" },
@@ -199,30 +198,30 @@
       try {
         container.innerHTML = "<p style='color: #ffffff; text-align: center; font-weight: bold; opacity: 0.7;'>Buscando notícias recentes...</p>"; 
 
-        // Requisições paralelas para todas as fontes
-        const requisicoes = fontes.map(fonte => 
-          fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fonte.url)}`)
+        // Adicionando timestamp ao final da URL e configurando no-cache no fetch
+        const requisicoes = fontes.map(fonte => {
+          const cacheBuster = `&_t=${Date.now()}`;
+          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fonte.url)}${cacheBuster}`;
+
+          return fetch(apiUrl, { cache: "no-store" })
             .then(res => res.json())
             .then(data => {
               if (data.status !== 'ok' || !data.items) {
                 console.warn(`Erro ao processar feed da fonte: ${fonte.nome}`);
                 return [];
               }
-              // Mapeia adicionando o nome da fonte
               return data.items.map(item => ({ ...item, fonteNome: fonte.nome }));
             })
             .catch(err => {
               console.error(`Erro na requisição da fonte ${fonte.nome}:`, err);
               return [];
-            })
-        );
+            });
+        });
 
         const resultados = await Promise.all(requisicoes);
         
-        // Junta todas as notícias em um único array
         let todasNoticias = resultados.flat();
 
-        // Ordena pela data de publicação (mais recentes primeiro)
         todasNoticias.sort((a, b) => new Date(b.pubDate.replace(" ", "T") + "Z") - new Date(a.pubDate.replace(" ", "T") + "Z"));
 
         container.innerHTML = ""; 
