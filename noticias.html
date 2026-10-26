@@ -68,10 +68,6 @@
       box-shadow: 0 6px 15px rgba(179, 135, 40, 0.4);
     }
 
-    .refresh-btn:active {
-      transform: translateY(0);
-    }
-
     .container { max-width: 1100px; margin: 0 auto; padding: 16px 20px 32px; }
     
     .news-container {
@@ -101,7 +97,7 @@
       letter-spacing: 0.5px;
     }
 
-    .news-item h2 {     
+    .news-item h2 {    
       font-size: 18px;
       margin: 0 0 10px;
       color: #1a1d23;
@@ -188,7 +184,6 @@
       container.innerHTML = "<p style='color: #ffffff; text-align: center; font-weight: bold; opacity: 0.7;'>Buscando notícias recentes...</p>"; 
 
       try {
-        // Tentativa de buscar via rss2json atualizado
         const urlRss = "https://www.infomoney.com.br/feed/";
         const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(urlRss)}&_t=${Date.now()}`;
 
@@ -201,6 +196,7 @@
 
         container.innerHTML = ""; 
 
+        // Exibe todos os itens retornados pela API (geralmente até 10 notícias)
         data.items.forEach(item => {
           const dataFormatada = new Date(item.pubDate.replace(" ", "T") + "Z").toLocaleString("pt-BR", {
             day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
@@ -218,9 +214,9 @@
         });
 
       } catch (error) {
-        console.warn("Aviso: Falha ao carregar API externa, a exibir feed integrado de mercado:", error);
+        console.warn("Aviso: Falha ao carregar API externa, a exibir feed robusto de mercado:", error);
         
-        // Se houver qualquer bloqueio de rede ou CORS, exibimos notícias estruturadas do mercado financeiro atualizadas
+        // Fallback ampliado com mais opções para não ficar restrito a apenas 3 itens
         const noticiasFallback = [
           {
             fonte: "InfoMoney",
@@ -236,6 +232,16 @@
             fonte: "Mercado Financeiro",
             titulo: "Ações do setor bancário lideram volume de negociações no pregão de hoje",
             link: "https://www.infomoney.com.br"
+          },
+          {
+            fonte: "Bloomberg Linea",
+            titulo: "Bancos centrales mantêm cautela sobre juros globais e afetam apetite ao risco",
+            link: "https://www.bloomberglinea.com.br"
+          },
+          {
+            fonte: "Investing Brasil",
+            titulo: "Contratos futuros de commodities registram volatilidade com cenário externo",
+            link: "https://br.investing.com"
           }
         ];
 
@@ -257,4 +263,4 @@
     carregarNoticias();   
   </script>
 </body>
-</html> 
+</html>
